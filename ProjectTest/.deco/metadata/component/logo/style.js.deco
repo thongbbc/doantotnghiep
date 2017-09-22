@@ -1,0 +1,19 @@
+{
+	"liveValues": [
+		{
+			"range": {
+				"from": {
+					"line": 7,
+					"ch": 41
+				},
+				"to": {
+					"line": 7,
+					"ch": 62
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "BackgroundColor"
+		}
+	]
+}
