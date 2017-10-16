@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',justifyContent:'center'
   },
     toolbar:{
-      backgroundColor:"rgba(164,132,132,1)",
+      backgroundColor:"rgba(0,0,0,0.2)",
       paddingTop:30,
       paddingBottom:10,
       flexDirection:'row'    //Step 1

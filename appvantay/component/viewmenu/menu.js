@@ -30,9 +30,18 @@ export default class Menu extends Component {
       })
   }
   setModalVisible(visible) {
-    this.setState({modalVisible: visible});
     if (visible == true) {
-        this.spring()
+      this.setState({modalVisible: visible});
+        // this.spring()
+        Animated.timing(this.state.slideAnimation,{
+          toValue:0,
+          duration:500
+        }).start()//()=>this.spring())
+    } else {
+      Animated.timing(this.state.slideAnimation,{
+        toValue:-Dimensions.get('window').width*3/4,
+        duration:400
+      }).start(()=>this.setState({modalVisible: visible}))
     }
   }
   async logout() {
@@ -61,7 +70,7 @@ export default class Menu extends Component {
       this.springValue,
       {
         toValue: 1,
-        friction: 2
+        friction: 5
       }
     ).start()
   }
@@ -70,8 +79,10 @@ export default class Menu extends Component {
     this.springValue = new Animated.Value(1)
 
     this.state = {
+      slideAnimation:new Animated.Value(-Dimensions.get('window').width*3/4),
       modalVisible:false
     }
+
   }
   _onClickAddMonHoc() {
     this.props.navigator.push({
@@ -85,13 +96,15 @@ export default class Menu extends Component {
     this.props.navigator.push({
       name:"dangKyMonHoc",
       duLieu:{
-        
+
              }
     })
   }
   render(){
+    const marginLeft = this.state.slideAnimation
     return(
       <View style={styles.container}>
+        <LinearGradient style={{flex:1}} colors = {['#B7F8DB','#50A7C2']}>
          <View style={styles.toolbar}>
          <View style={{left:5,width:30}}>
          <TouchableHighlight
@@ -111,8 +124,8 @@ export default class Menu extends Component {
            />
            </View>
          </TouchableHighlight></View>
-            <Text style={styles.toolbarTitle}>Menu Quản Lý</Text>
-            <Text style={styles.toolbarButton}>Add</Text>
+            <Text style={styles.toolbarTitle}>      Menu Quản Lý</Text>
+            <Text style={styles.toolbarButton}> </Text>
         </View>
         <View style={styles.btnXemDanhSach}>
           <TouchableHighlight onPress={this._onClickDanhSach.bind(this)}
@@ -157,7 +170,7 @@ export default class Menu extends Component {
         <View style = {{flex:1,position:'absolute'}}>
           <View style={{marginTop: 30,left:10}}>
             <Modal
-              animationType="fade"
+              animationType="none"
               transparent={true}
               visible={this.state.modalVisible}
               onRequestClose={() => {alert("Modal has been closed.")}}
@@ -166,8 +179,8 @@ export default class Menu extends Component {
                height:Dimensions.get('window').height,
                backgroundColor:'rgba(0,0,0,0.5)'}}></View>
              <View style={{flex:1,flexDirection:'row'}}>
-               <Animated.View style={{flex:3,transform: [{scale: this.springValue}]}}>
-                 <LinearGradient colors={['#29323c','#485563']} style={{flex:1}}>
+               <Animated.View style={{flex:3,marginLeft,transform: [{scale: this.springValue}]}}>
+                 <LinearGradient colors={['rgba(255,255,255,1)','rgba(0,0,0,1)']} style={{flex:1}}>
                   <View>
                     <View style={{height:30}}></View>
                     <View style={{flex:1,alignItems:'center'}}>
@@ -199,6 +212,7 @@ export default class Menu extends Component {
             </Modal>
           </View>
         </View>
+      </LinearGradient>
       </View>
     )
   }

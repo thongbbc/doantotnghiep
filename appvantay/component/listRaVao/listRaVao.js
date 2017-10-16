@@ -5,6 +5,7 @@ import {
   TouchableHighlight,TextInput,Platform,ActivityIndicator,FlatList
 } from 'react-native'
 import styles from './style'
+import {LinearGradient} from 'expo'
 export default class ListRaVao extends Component {
   _renderLoadingView(){
     if (this.state.animating) {
@@ -13,7 +14,7 @@ export default class ListRaVao extends Component {
       top:1,alignItems:'center',justifyContent:'center'}}
       animating={ this.state.animating }
       size={'small'}
-      hidesWhenStopped={true} 
+      hidesWhenStopped={true}
       color={'black'}/>    }
   };
   constructor(props){
@@ -25,17 +26,18 @@ export default class ListRaVao extends Component {
         dataSource:[],
         them:[]
       }
-      
+
   }
   _onClickBack() {
     this.props.navigator.pop()
   }
-  _renderRow(item){
+  _renderRow(item,index){
+    color = index%2?'rgba(255,255,255,0.2)':'rgba(0,0,0,0.1)'
     return (
-      <View style={{height:50,width:null,flexDirection:'row',alignItems:'center'}}>
-        <View style={{flex:1,left:20,flex:1,alignItems:'flex-start'}}><Text  style={{textAlign:'center'}} onPress={()=>alert(item.hoten)}>{item.id}</Text></View>
-        <View style={{flex:3,alignItems:'center'}}><Text  style={{textAlign:'center'}} onPress={()=>alert(item)}>{item.hoten}</Text></View>
-        <View style={{flex:2}}><Text  style={{textAlign:'center'}} onPress={()=>alert(item)}>{item.mssv}</Text></View>
+      <View style={{backgroundColor:color,height:50,width:null,flexDirection:'row',alignItems:'center'}}>
+        <View style={{flex:1,left:20,flex:1,alignItems:'flex-start'}}><Text  style={{textAlign:'center',backgroundColor:'transparent'}} onPress={()=>alert(item.hoten)}>{item.id}</Text></View>
+        <View style={{flex:3,alignItems:'center'}}><Text  style={{textAlign:'center',backgroundColor:'transparent'}} onPress={()=>alert(item)}>{item.hoten}</Text></View>
+        <View style={{flex:2}}><Text  style={{textAlign:'center',backgroundColor:'transparent'}} onPress={()=>alert(item)}>{item.mssv}</Text></View>
       </View>
       );
   }
@@ -68,7 +70,7 @@ export default class ListRaVao extends Component {
                          this.state.them.map(function(value){
                              dulieu2.push(value)
                         })
-                         
+
                         for (var i =0 ;i<dulieu.length; i++) {
                           for (var j =0 ;j<dulieu2.length;j++) {
                             if(dulieu2[j].id == dulieu[i].id) {
@@ -90,7 +92,7 @@ export default class ListRaVao extends Component {
       .catch((error) => {
          console.error(error);
       });
-      
+
   }
   componentDidMount() {
       this.fetchData()
@@ -101,10 +103,11 @@ export default class ListRaVao extends Component {
     })
     this.fetchData()
   }
-  
+
   render() {
     return (
       <View style={styles.container} >
+        <LinearGradient style={{flex:1}} colors = {['#B7F8DB','#50A7C2']}>
          <View style={styles.toolbar}>
           <TouchableHighlight style= {{height:30, justifyContent:'center'}}
             onPress={this._onClickBack.bind(this)}
@@ -115,12 +118,11 @@ export default class ListRaVao extends Component {
             <Text style={styles.toolbarTitle}>Danh Sách Ra Vào</Text>
             <Text style={styles.toolbarButton}>Add</Text>
         </View>
-        <View style={{height:50,flexDirection:'row'}}>
-          <View style={{left:20,flex:1,alignItems:'flex-start',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>ID</Text></View>
-          <View style={{flex:1,alignItems:'flex-start',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>Ho Ten</Text></View>
-          <View style={{flex:1,alignItems:'center',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>MSSV</Text></View>
+        <View style={{backgroundColor:"rgba(0,0,0,0.2)",height:50,flexDirection:'row'}}>
+          <View style={{left:20,flex:1,alignItems:'flex-start',justifyContent:'center'}}><Text style={{color:'white',backgroundColor:'transparent',textAlign:'center',fontWeight:'bold',fontSize:20}}>ID</Text></View>
+          <View style={{flex:1,alignItems:'flex-start',justifyContent:'center'}}><Text style={{color:'white',backgroundColor:'transparent',textAlign:'center',fontWeight:'bold',fontSize:20}}>Ho Ten</Text></View>
+          <View style={{flex:1,alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',backgroundColor:'transparent',textAlign:'center',fontWeight:'bold',fontSize:20}}>MSSV</Text></View>
         </View>
-        {this._renderLoadingView()}
        <FlatList style={{flex:1}}
               data = {this.state.dataSource}
               keyExtractor = {(x,i) => i}
@@ -128,10 +130,12 @@ export default class ListRaVao extends Component {
              onRefresh = {() =>
                 this.refresh()
               }
-              renderItem={({item}) => 
-              this._renderRow(item)
+              renderItem={({item,index}) =>
+              this._renderRow(item,index)
           }>
           </FlatList>
+        </LinearGradient>
+          {this._renderLoadingView()}
       </View>
     );
   }

@@ -227,6 +227,7 @@ export default class AddMonHoc extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <LinearGradient style={{flex:1}} colors = {['#B7F8DB','#50A7C2']}>
         <View style={styles.toolbar}>
           <TouchableHighlight style={{
             height: 30,
@@ -243,26 +244,26 @@ export default class AddMonHoc extends Component {
           </TouchableHighlight>
         </View>
         <View style={{
-          flex: 1,
-          alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.4)'
+          flex: 1,backgroundColor:"rgba(0,0,0,0)",
+          alignItems: 'center'
         }}>
           <View style={{
-            marginTop: 20,
-            flexDirection: 'row'
+            marginTop: 20
           }}>
             {Platform.OS == 'ios'
               ? <TextInput onChangeText={(value) => {
                   this.setState({tenMonHoc: value})
                 }} style={{
                   fontWeight: 'bold',
-                  padding: 5,
+                  borderRadius:20,
                   fontSize: 13,
+                  paddingLeft:10,
+                  paddingTop:5,paddingRight:5,paddingBottom:5,
                   width: Dimensions.get('window').width - 60,
                   height: (Dimensions.get('window').height / 2 - 90) / 6,
-                  backgroundColor: "rgba(255,255,255,0.2)",
+                  backgroundColor: "rgba(255,255,255,0.5)",
                   color: "black"
-                }} underlineColorAndroid={"transparent"} placeholder={'Tên Môn Học'} placeholderTextColor={"rgba(255,255,255,0.7)"}/>
+                }} underlineColorAndroid={"transparent"} placeholder={'Tên Môn Học'} placeholderTextColor={"rgba(0,0,0,0.5)"}/>
               : <TextInput onChangeText={(value) => {
                 this.setState({tenMonHoc: value})
               }} style={{
@@ -270,11 +271,12 @@ export default class AddMonHoc extends Component {
                 width: Dimensions.get('window').width - 60,
                 padding: 5,
                 fontSize: 13,
+                borderRadius:20,
                 backgroundColor: 'transparent',
                 height: (Dimensions.get('window').height / 2 - 90) / 6,
-                backgroundColor: "rgba(255,255,255,0.2)",
+                backgroundColor: "rgba(255,255,255,0.5)",
                 color: "black"
-              }} underlineColorAndroid={"transparent"} placeholder={'Tên Môn Học'} placeholderTextColor={"rgba(255,255,255,0.7)"}/>}
+              }} underlineColorAndroid={"transparent"} placeholder={'Tên Môn Học'} placeholderTextColor={"rgba(0,0,0,0.5)"}/>}
           </View>
           <View style={{
             marginTop: 10,
@@ -284,6 +286,7 @@ export default class AddMonHoc extends Component {
             <Text style={{
               left: 30,
               width: Dimensions.get('window').width,
+              backgroundColor:'transparent',
               textAlign: 'left',
               fontSize: 12,
               fontWeight: 'bold'
@@ -302,9 +305,10 @@ export default class AddMonHoc extends Component {
                     fontWeight: 'bold',
                     padding: 5,
                     fontSize: 13,
+                    borderRadius:20,
                     width: Dimensions.get('window').width - 60,
                     height: (Dimensions.get('window').height / 2 - 90) / 6,
-                    backgroundColor: "rgba(255,255,255,0.2)",
+                    backgroundColor: "rgba(255,255,255,0.5)",
                     color: "black"
                   }} underlineColorAndroid={"transparent"}>{this.state.timeStart.getHours().toString()}:{(this.state.timeStart.getMinutes()).toString()}</Animated.Text>
                 : <Animated.Text onPress={this.onPressTimeStart.bind(this)} style={{
@@ -316,10 +320,11 @@ export default class AddMonHoc extends Component {
                   fontWeight: 'bold',
                   width: Dimensions.get('window').width - 60,
                   padding: 5,
+                  borderRadius:20,
                   fontSize: 13,
                   backgroundColor: 'transparent',
                   height: (Dimensions.get('window').height / 2 - 90) / 6,
-                  backgroundColor: "rgba(255,255,255,0.2)",
+                  backgroundColor: "rgba(255,255,255,0.5)",
                   color: "black"
                 }} underlineColorAndroid={"transparent"}>{this.state.timeStart.getHours().toString()}:{(this.state.timeStart.getMinutes()).toString()}</Animated.Text>}
             </View>
@@ -327,6 +332,7 @@ export default class AddMonHoc extends Component {
               left: 30,
               width: Dimensions.get('window').width,
               textAlign: 'left',
+              backgroundColor:'transparent',
               fontSize: 12,
               fontWeight: 'bold'
             }}>Time End</Text>
@@ -346,7 +352,7 @@ export default class AddMonHoc extends Component {
                     fontSize: 13,
                     width: Dimensions.get('window').width - 60,
                     height: (Dimensions.get('window').height / 2 - 90) / 6,
-                    backgroundColor: "rgba(255,255,255,0.2)",
+                    backgroundColor: "rgba(255,255,255,0.5)",
                     color: "black"
                   }} underlineColorAndroid={"transparent"}>{this.state.timeEnd.getHours().toString()}:{(this.state.timeEnd.getMinutes()).toString()}</Animated.Text>
                 : <Animated.Text onPress={this.onPressTimeEnd.bind(this)} style={{
@@ -361,7 +367,7 @@ export default class AddMonHoc extends Component {
                   fontSize: 13,
                   backgroundColor: 'transparent',
                   height: (Dimensions.get('window').height / 2 - 90) / 6,
-                  backgroundColor: "rgba(255,255,255,0.2)",
+                  backgroundColor: "rgba(255,255,255,0.5)",
                   color: "black"
                 }} underlineColorAndroid={"transparent"}>{this.state.timeEnd.getHours().toString()}:{(this.state.timeEnd.getMinutes()).toString()}</Animated.Text>}
             </View>
@@ -370,6 +376,7 @@ export default class AddMonHoc extends Component {
             </Picker>
           </View>
         </View>
+        </LinearGradient>
         {this.checkHide()}
       </View>
     );

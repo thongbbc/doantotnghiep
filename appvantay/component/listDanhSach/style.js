@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
     toolbar:{
       width:Dimensions.get('window').width,
-      backgroundColor:"rgba(164,132,132,1)",
+      backgroundColor:"rgba(0,0,0,0.2)",
       paddingTop:30,
       paddingBottom:10,
       flexDirection:'row'    //Step 1

@@ -4,9 +4,9 @@ import {
   View,
   TouchableHighlight,
   TextInput,Dimensions,FlatList,
-  ActivityIndicator,Platform
+  ActivityIndicator,Platform,Image
 } from 'react-native'
-
+import {LinearGradient} from 'expo'
 import styles from './style'
 export default class ListDetail extends Component {
   constructor(props){
@@ -17,7 +17,7 @@ export default class ListDetail extends Component {
         them:[],
         animating: true,refreshing:false
       }
-      
+
   }
  _renderLoadingView(){
        if (this.state.animating) {
@@ -26,19 +26,21 @@ export default class ListDetail extends Component {
       top:1,alignItems:'center',justifyContent:'center'}}
       animating={ this.state.animating }
       size={'small'}
-      hidesWhenStopped={true} 
+      hidesWhenStopped={true}
       color={'black'}/>    }
   }
   _onClickBack() {
     this.props.navigator.pop()
   }
-  _renderRow(item){
+  _renderRow(item,index){
+    color = index%2?'rgba(255,255,255,0.2)':'rgba(0,0,0,0.1)'
+    image = item.typeTrip == true?require('../../image/goinside.png'):require('../../image/gooutside.png')
     return (
-      <View style={{height:50,width:null,flexDirection:'row',alignItems:'center'}}>
-        <View style={{flex:1,left:20,flex:1,alignItems:'flex-start'}}><Text onPress={()=>alert(item)}>{item.id}</Text></View>
-        <View style={{flex:3}}><Text style={{textAlign:'center'}} onPress={()=>alert(item)}>{item.time}</Text></View>
-        <View style={{flex:2}}><Text style={{textAlign:'center'}} onPress={()=>alert(item)}>{item.date}</Text></View>
-        <View style={{flex:2}}><Text style={{textAlign:'center'}} onPress={()=>alert(item)}>{item.typeTrip?'Vào':'Ra'}</Text></View>
+      <View style={{backgroundColor:color,height:50,width:null,flexDirection:'row',alignItems:'center'}}>
+        <View style={{flex:1,left:20,flex:1,alignItems:'flex-start'}}><Text style={{backgroundColor:'transparent'}} onPress={()=>alert(item)}>{item.id}</Text></View>
+        <View style={{flex:3}}><Text style={{textAlign:'center',backgroundColor:'transparent'}} onPress={()=>alert(item)}>{item.time}</Text></View>
+        <View style={{flex:2}}><Text style={{textAlign:'center',backgroundColor:'transparent'}} onPress={()=>alert(item)}>{item.date}</Text></View>
+        <View style={{flex:2}}><View style={{alignItems:'center'}}><Image source={image}/></View></View>
       </View>
       );
   }
@@ -90,6 +92,7 @@ export default class ListDetail extends Component {
   render() {
     return (
       <View style={styles.container} >
+        <LinearGradient style={{flex:1}} colors={['#B7F8DB','#50A7C2']}>
          <View style={styles.toolbar}>
           <TouchableHighlight style= {{height:30, justifyContent:'center'}}
             onPress={this._onClickBack.bind(this)}
@@ -100,25 +103,26 @@ export default class ListDetail extends Component {
             <Text style={styles.toolbarTitle}>{this.props.hoten}</Text>
             <Text style={styles.toolbarButton}>Add</Text>
         </View>
-        <View style={{height:50,flexDirection:'row'}}>
-          <View style={{left:20,flex:1,alignItems:'flex-start',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>ID</Text></View>
-          <View style={{flex:3,alignItems:'center',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>Time</Text></View>
-          <View style={{flex:2,alignItems:'center',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>Date</Text></View>
-          <View style={{flex:2,alignItems:'center',justifyContent:'center'}}><Text style={{color:'red',textAlign:'center',fontWeight:'bold',fontSize:20}}>Status</Text></View>
+        <View style={{backgroundColor:'rgba(0,0,0,0.2)',height:50,flexDirection:'row'}}>
+          <View style={{left:20,flex:1,alignItems:'flex-start',justifyContent:'center'}}><Text style={{color:'white',textAlign:'center',fontWeight:'bold',fontSize:20}}>ID</Text></View>
+          <View style={{flex:3,alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',textAlign:'center',fontWeight:'bold',fontSize:20,backgroundColor:'transparent'}}>TIME</Text></View>
+          <View style={{flex:2,alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',textAlign:'center',fontWeight:'bold',fontSize:20,backgroundColor:'transparent'}}>DATE</Text></View>
+          <View style={{flex:2,alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',textAlign:'center',fontWeight:'bold',fontSize:20,backgroundColor:'transparent'}}>STATUS</Text></View>
         </View>
-        
-        
-       <FlatList style={{flex:1}}
+
+
+          <FlatList style={{flex:1}}
               data = {this.state.dataSource}
               keyExtractor = {(x,i) => i}
               refreshing = {this.state.refreshing}
-             onRefresh = {() =>
+              onRefresh = {() =>
                 this.refresh()
               }
-              renderItem={({item}) => 
-              this._renderRow(item)
+              renderItem={({item,index}) =>
+              this._renderRow(item,index)
           }>
           </FlatList>
+        </LinearGradient>
         {this._renderLoadingView()}
       </View>
     );

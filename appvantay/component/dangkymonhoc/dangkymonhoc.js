@@ -3,14 +3,11 @@ import {
   Text,
   View,
   TouchableHighlight,
-  KeyboardAvoidingView,
-  ListView,
   Alert,
   Picker,
   Animated,
   Keyboard,
   DatePickerIOS,Image,
-  TextInput,
   Dimensions,
   FlatList,
   ProgressBarAndroid,
@@ -193,6 +190,7 @@ export default class DangKyMonHoc extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <LinearGradient style={{flex:1}} colors={['#B7F8DB','#50A7C2']}>
         <View style={styles.toolbar}>
           <TouchableHighlight style={{
             height: 30,
@@ -210,7 +208,7 @@ export default class DangKyMonHoc extends Component {
         </View>
         <View style={{flex:1,
           alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.4)'
+          backgroundColor: 'rgba(0,0,0,0)'
         }}>
           <View style={{
             flex:1
@@ -229,6 +227,7 @@ export default class DangKyMonHoc extends Component {
             }} data={this.state.dataSource} keyExtractor= {(x,i) => i} refreshing={this.state.refreshing} onRefresh= {() => this.refresh() } renderItem={({item}) => this._renderRow(item)}></FlatList>
           </View>
         </View>
+        </LinearGradient>
         {this._renderLoadingView()}
       </View>
     )

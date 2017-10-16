@@ -93,28 +93,30 @@ export default class ListDanhSach extends Component {
     return (
       <View style={{
         height: 60,
-        width: null,
+        width: null,backgroundColor:'transparent',
         alignItems: 'center'
       }}>
         <LinearGradient style={{
           width: Dimensions.get('window').width - 10,
-          height: 50,
+          height: 50,backgroundColor:'transparent',
           borderRadius: 10
         }} colors={item.color}>
           <TouchableHighlight onPress={this._onPress.bind(this,item)} style={{
-            flex: 1
+            flex: 1,
+            borderRadius: 10
           }}>
             <View style={{
               height: 50,
+              backgroundColor: "rgba(255,255,255,0.5)",
+              borderRadius:10,
               alignItems: 'center',
               width: null,
               flex: 1,
               flexDirection: 'row',
-              backgroundColor: "rgba(255,255,255,0.5)"
             }}>
               <View style={{
                 flex: 1,
-                left: 20,
+                left: 20,backgroundColor:'transparent',
                 alignItems: 'flex-start'
               }}>
                 <Text style={{
@@ -151,6 +153,7 @@ export default class ListDanhSach extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <LinearGradient style={{flex:1}} colors={['#B7F8DB','#50A7C2']}>
         <View style={styles.toolbar}>
           <TouchableHighlight style={{
             height: 30,
@@ -159,10 +162,10 @@ export default class ListDanhSach extends Component {
             <Text style={styles.toolbarButton}>Back</Text>
           </TouchableHighlight>
           <Text style={styles.toolbarTitle}>Danh Sách</Text>
-          <Text style={styles.toolbarButton}>Add</Text>
+          <Text style={styles.toolbarButton}>   </Text>
         </View>
         <View style={{
-          height: 50,
+          height: 50,backgroundColor:'rgba(0,0,0,0.2)',
           flexDirection: 'row'
         }}>
           <View style={{
@@ -172,8 +175,9 @@ export default class ListDanhSach extends Component {
             justifyContent: 'center'
           }}>
             <Text style={{
-              color: 'red',
+              color: 'white',
               textAlign: 'center',
+              backgroundColor:'transparent',
               fontWeight: 'bold',
               fontSize: 20
             }}>ID</Text>
@@ -184,11 +188,12 @@ export default class ListDanhSach extends Component {
             justifyContent: 'center'
           }}>
             <Text style={{
-              color: 'red',
+              color: 'white',
               textAlign: 'center',
               fontWeight: 'bold',
-              fontSize: 20
-            }}>Ho Ten</Text>
+              fontSize: 20,
+              backgroundColor:'transparent'
+            }}>NAME</Text>
           </View>
           <View style={{
             flex: 1,
@@ -196,17 +201,19 @@ export default class ListDanhSach extends Component {
             justifyContent: 'center'
           }}>
             <Text style={{
-              color: 'red',
+              color: 'white',
               textAlign: 'center',
               fontWeight: 'bold',
+              backgroundColor:'transparent',
               fontSize: 20
             }}>MSSV</Text>
           </View>
         </View>
         <FlatList style={{
+          marginTop:5,
           flex: 1
         }} data={this.state.dataSource} keyExtractor= {(x,i) => i} refreshing={this.state.refreshing} onRefresh= {() => this.refresh() } renderItem={({item}) => this._renderItem(item)}></FlatList>
-
+        </LinearGradient>
         {this._renderLoadingView()}
       </View>
     );
