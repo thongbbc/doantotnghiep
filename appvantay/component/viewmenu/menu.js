@@ -31,16 +31,12 @@ export default class Menu extends Component {
   }
   setModalVisible(visible) {
     if (visible == true) {
-      this.setState({modalVisible: visible});
-        // this.spring()
-        Animated.timing(this.state.slideAnimation,{
-          toValue:0,
-          duration:500
-        }).start()//()=>this.spring())
+      this.spring(visible)
+
     } else {
       Animated.timing(this.state.slideAnimation,{
         toValue:-Dimensions.get('window').width*3/4,
-        duration:400
+        duration:500
       }).start(()=>this.setState({modalVisible: visible}))
     }
   }
@@ -64,15 +60,22 @@ export default class Menu extends Component {
                 }
     })
   }
-  spring () {
+  spring (visible) {
     this.springValue.setValue(0.3)
-    Animated.spring(
+    Animated.timing(
       this.springValue,
       {
         toValue: 1,
-        friction: 5
+        duration:200
       }
-    ).start()
+    ).start(()=>{
+      this.setState({modalVisible: visible});
+        // this.spring()
+        Animated.timing(this.state.slideAnimation,{
+          toValue:0,
+          duration:600
+        }).start()//()=>this.spring())
+    })
   }
   constructor(props){
     super(props)
@@ -113,16 +116,16 @@ export default class Menu extends Component {
            onPress={() => {
            this.setModalVisible(true)
          }}>
-           <View >
-           <Image
-             style={{
-               width: 30,
-               height:  30
-             }}
-             resizeMode={"cover"}
-             source={require('../../image/vert.png')}
-           />
-           </View>
+           <Animated.View style={{transform: [{scale: this.springValue}]}}>
+             <Image
+               style={{
+                 width: 30,
+                 height:  30
+               }}
+               resizeMode={"cover"}
+               source={require('../../image/vert.png')}
+             />
+          </Animated.View>
          </TouchableHighlight></View>
             <Text style={styles.toolbarTitle}>      Menu Quản Lý</Text>
             <Text style={styles.toolbarButton}> </Text>
@@ -179,28 +182,47 @@ export default class Menu extends Component {
                height:Dimensions.get('window').height,
                backgroundColor:'rgba(0,0,0,0.5)'}}></View>
              <View style={{flex:1,flexDirection:'row'}}>
-               <Animated.View style={{flex:3,marginLeft,transform: [{scale: this.springValue}]}}>
-                 <LinearGradient colors={['rgba(255,255,255,1)','rgba(0,0,0,1)']} style={{flex:1}}>
-                  <View>
+               <Animated.View style={{height:Dimensions.get('window').height,width:Dimensions.get('window').width*3/4,marginLeft,transform: [{scale: this.springValue}]}}>
+                 <LinearGradient colors = {['#B7F8DB','#50A7C2']} style={{flex:1}}>
+                  <View style={{flex:1}}>
                     <View style={{height:30}}></View>
                     <View style={{flex:1,alignItems:'center'}}>
-                      <Image
-                        style={{
-                          width: 100,
-                          height:  100,borderRadius:100/2
-                        }}
-                        source={{uri: this.props.image}}
-                      />
-                      <View style={{height:null,width:null}}>
-                        <TouchableHighlight style={{height:30,width:100,alignItems:'center'}} onPress={()=>{this._onClickLogout()}}>
-                          <Text style={{color:'white',fontSize:20,fontWeight:'bold'}}>LOGOUT</Text>
-                        </TouchableHighlight>
+                      <View style={{
+                          width:Dimensions.get('window').width*3/4,height:Dimensions.get('window').height/4,alignItems:'center'}}>
+
                       </View>
+                      <View style={{width:Dimensions.get('window').width*3/4,height:Dimensions.get('window').height*3/4,backgroundColor:'rgba(0,0,0,0.5)'}}>
+                        <View style={{padding:10,flex:1,top:Dimensions.get('window').width*3/24 + 20}}>
+                          <TouchableHighlight style={{bottom:1}} onPress={()=>{this._onClickLogout()}}>
+                            <Text style={{color:'white',fontSize:15,fontWeight:'bold'}}>About</Text>
+                          </TouchableHighlight>
+                          <TouchableHighlight style={{bottom:0}} onPress={()=>{this._onClickLogout()}}>
+                            <Text style={{color:'white',fontSize:15,fontWeight:'bold'}}>Logout</Text>
+                          </TouchableHighlight>
+                        </View>
+                      </View>
+                      <LinearGradient
+                        colors = {['#B7F8DB','rgba(255,255,255,0.00002)']}
+                        style={{
+                          alignItems:'center',justifyContent:'center',
+                          position:'absolute',
+                          marginTop:Dimensions.get('window').height/4-Dimensions.get('window').width*3/12/2,
+                          width:Dimensions.get('window').width*3/12 + 10,
+                          height:Dimensions.get('window').width*3/12 + 10,borderRadius:Dimensions.get('window').width*3/12/2 + 10
+                        }}>
+                        <Image
+                          style={{
+                            width:Dimensions.get('window').width*3/12,
+                            height:Dimensions.get('window').width*3/12,borderRadius:Dimensions.get('window').width*3/12/2
+                          }}
+                          source={{uri: this.props.image}}
+                        />
+                      </LinearGradient>
                     </View>
                   </View>
                  </LinearGradient>
                </Animated.View>
-               <View style={{flex:1}}>
+               <View style={{height:Dimensions.get('window').height,width:Dimensions.get('window').width/4}}>
                  <TouchableHighlight
                  underlayColor = {'transparent'} style={{flex:1}}
                  onPress={()=>{this.setModalVisible(false)}}>
