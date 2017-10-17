@@ -288,7 +288,7 @@ export default class AddMonHoc extends Component {
               width: Dimensions.get('window').width,
               backgroundColor:'transparent',
               textAlign: 'left',
-              fontSize: 12,
+              fontSize: 12,paddingTop:10,paddingBottom:10,
               fontWeight: 'bold'
             }}>Time Start</Text>
             <View style={{
@@ -333,7 +333,7 @@ export default class AddMonHoc extends Component {
               width: Dimensions.get('window').width,
               textAlign: 'left',
               backgroundColor:'transparent',
-              fontSize: 12,
+              fontSize: 12,paddingTop:10,paddingBottom:10,
               fontWeight: 'bold'
             }}>Time End</Text>
             <View style={{
@@ -349,6 +349,7 @@ export default class AddMonHoc extends Component {
                     ],
                     fontWeight: 'bold',
                     padding: 5,
+                    borderRadius:20,
                     fontSize: 13,
                     width: Dimensions.get('window').width - 60,
                     height: (Dimensions.get('window').height / 2 - 90) / 6,
@@ -365,15 +366,19 @@ export default class AddMonHoc extends Component {
                   width: Dimensions.get('window').width - 60,
                   padding: 5,
                   fontSize: 13,
+                  borderRadius:20,
                   backgroundColor: 'transparent',
                   height: (Dimensions.get('window').height / 2 - 90) / 6,
                   backgroundColor: "rgba(255,255,255,0.5)",
                   color: "black"
                 }} underlineColorAndroid={"transparent"}>{this.state.timeEnd.getHours().toString()}:{(this.state.timeEnd.getMinutes()).toString()}</Animated.Text>}
+                <View style={{width: Dimensions.get('window').width - 60}}>
+                  <Picker selectedValue={this.state.selectedThu} onValueChange={(thu) => this.setState({selectedThu: thu})}>
+                    {this._renderItem()}
+                  </Picker>
+                </View>
             </View>
-            <Picker selectedValue={this.state.selectedThu} onValueChange={(thu) => this.setState({selectedThu: thu})}>
-              {this._renderItem()}
-            </Picker>
+
           </View>
         </View>
         </LinearGradient>

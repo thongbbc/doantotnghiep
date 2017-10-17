@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {
   Text,AsyncStorage,Dimensions,
   View,Image, Modal,Animated,
-  TouchableHighlight,
+  TouchableHighlight,Alert
 } from 'react-native'
 import DrawerLayout from '../drawerCustom/drawerLayout'
 import styles from './style'
@@ -83,7 +83,8 @@ export default class Menu extends Component {
 
     this.state = {
       slideAnimation:new Animated.Value(-Dimensions.get('window').width*3/4),
-      modalVisible:false
+      modalVisible:false,
+      sideMenuString: ['About','Logout','Fix','Fix','Fix','Fix','Fix','Fix','Fix','Fix']
     }
 
   }
@@ -102,6 +103,9 @@ export default class Menu extends Component {
 
              }
     })
+  }
+  _onClickAbout() {
+    Alert.alert("This is a app manage print finger of VLTH")
   }
   render(){
     const marginLeft = this.state.slideAnimation
@@ -193,11 +197,11 @@ export default class Menu extends Component {
                       </View>
                       <View style={{width:Dimensions.get('window').width*3/4,height:Dimensions.get('window').height*3/4,backgroundColor:'rgba(0,0,0,0.5)'}}>
                         <View style={{padding:10,flex:1,top:Dimensions.get('window').width*3/24 + 20}}>
-                          <TouchableHighlight style={{bottom:1}} onPress={()=>{this._onClickLogout()}}>
-                            <Text style={{color:'white',fontSize:15,fontWeight:'bold'}}>About</Text>
+                          <TouchableHighlight style={{height:Dimensions.get('window').height*3/4/this.state.sideMenuString.length,bottom:1}} onPress={()=>{this._onClickAbout.bind(this)}}>
+                            <Text style={{color:'white',fontSize:15,fontWeight:'bold'}}>{this.state.sideMenuString[0]}</Text>
                           </TouchableHighlight>
                           <TouchableHighlight style={{bottom:0}} onPress={()=>{this._onClickLogout()}}>
-                            <Text style={{color:'white',fontSize:15,fontWeight:'bold'}}>Logout</Text>
+                            <Text style={{color:'white',fontSize:15,fontWeight:'bold'}}>{this.state.sideMenuString[1]}</Text>
                           </TouchableHighlight>
                         </View>
                       </View>
