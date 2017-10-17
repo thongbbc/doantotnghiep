@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import {
   Text,AsyncStorage,Dimensions,
-  View,Image, Modal,Animated,
+  View,Image, Modal,Animated,Easing,
   TouchableHighlight,Alert
 } from 'react-native'
 import DrawerLayout from '../drawerCustom/drawerLayout'
@@ -36,8 +36,12 @@ export default class Menu extends Component {
     } else {
       Animated.timing(this.state.slideAnimation,{
         toValue:-Dimensions.get('window').width*3/4,
-        duration:500
+        duration:500,easing:Easing.bounce
       }).start(()=>this.setState({modalVisible: visible}))
+      Animated.timing(this.state.slideAnimation2,{
+        toValue:0,
+        duration:500,easing:Easing.bounce
+      }).start()
     }
   }
   async logout() {
@@ -66,15 +70,19 @@ export default class Menu extends Component {
       this.springValue,
       {
         toValue: 1,
-        duration:200
+        duration:200,easing:Easing.bounce
       }
     ).start(()=>{
       this.setState({modalVisible: visible});
         // this.spring()
         Animated.timing(this.state.slideAnimation,{
           toValue:0,
-          duration:600
-        }).start()//()=>this.spring())
+          duration:600,easing:Easing.bounce
+        }).start()
+        Animated.timing(this.state.slideAnimation2,{
+          toValue:-Dimensions.get('window').width-Dimensions.get('window').width/2,
+          duration:600,easing:Easing.bounce
+        }).start()
     })
   }
   constructor(props){
@@ -83,6 +91,7 @@ export default class Menu extends Component {
 
     this.state = {
       slideAnimation:new Animated.Value(-Dimensions.get('window').width*3/4),
+      slideAnimation2:new Animated.Value(0),
       modalVisible:false,
       sideMenuString: ['About','Logout','Fix','Fix','Fix','Fix','Fix','Fix','Fix','Fix']
     }
@@ -109,8 +118,10 @@ export default class Menu extends Component {
   }
   render(){
     const marginLeft = this.state.slideAnimation
+    const marginRight = this.state.slideAnimation2
     return(
       <View style={styles.container}>
+        <Animated.View style={{marginRight,flex:1}}>
         <LinearGradient style={{flex:1}} colors = {['#B7F8DB','#50A7C2']}>
          <View style={styles.toolbar}>
          <View style={{left:5,width:30}}>
@@ -184,7 +195,7 @@ export default class Menu extends Component {
               >
               <View style={{position:'absolute',width:Dimensions.get('window').width,
                height:Dimensions.get('window').height,
-               backgroundColor:'rgba(0,0,0,0.5)'}}></View>
+               backgroundColor:'rgba(0,0,0,0)'}}></View>
              <View style={{flex:1,flexDirection:'row'}}>
                <Animated.View style={{height:Dimensions.get('window').height,width:Dimensions.get('window').width*3/4,marginLeft,transform: [{scale: this.springValue}]}}>
                  <LinearGradient colors = {['#B7F8DB','#50A7C2']} style={{flex:1}}>
@@ -239,6 +250,7 @@ export default class Menu extends Component {
           </View>
         </View>
       </LinearGradient>
+    </Animated.View>
       </View>
     )
   }
