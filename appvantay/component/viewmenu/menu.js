@@ -92,9 +92,25 @@ export default class Menu extends Component {
     this.state = {
       slideAnimation:new Animated.Value(-Dimensions.get('window').width*3/4),
       slideAnimation2:new Animated.Value(0),
+      slideAnimation3:new Animated.Value(-300),
+      slideAnimation4:new Animated.Value(-300),
       modalVisible:false,
       sideMenuString: ['About','Logout','Fix','Fix','Fix','Fix','Fix','Fix','Fix','Fix']
     }
+  }
+  componentDidMount() {
+    Animated.parallel([
+      Animated.timing(this.state.slideAnimation3,{
+        toValue:0,
+        duration:2000,easing:Easing.bounce
+      }).start(),
+      Animated.timing(this.state.slideAnimation4,{
+        toValue:0,
+        duration:2000,easing:Easing.bounce
+      }).start()
+    ])
+  }
+  componentDidUpdate() {
 
   }
   _onClickAddMonHoc() {
@@ -119,6 +135,8 @@ export default class Menu extends Component {
   render(){
     const marginLeft = this.state.slideAnimation
     const marginRight = this.state.slideAnimation2
+    const marginLeft2 = this.state.slideAnimation3
+    const marginRight2 = this.state.slideAnimation4
     return(
       <View style={styles.container}>
         <Animated.View style={{marginRight,flex:1}}>
@@ -145,43 +163,43 @@ export default class Menu extends Component {
             <Text style={styles.toolbarTitle}>      Menu Quản Lý</Text>
             <Text style={styles.toolbarButton}> </Text>
         </View>
-        <View style={styles.btnXemDanhSach}>
+        <Animated.View style={{width:null,height:null,alignItems:'center',marginLeft:marginLeft2}}>
           <TouchableHighlight onPress={this._onClickDanhSach.bind(this)}
             style={{
               width:220,marginTop:10,height:50,alignItems:'center',justifyContent:'center',backgroundColor:"rgba(226,127,127,1)",borderRadius:10
           }}>
             <Text style={{fontSize:20,color:'white',fontWeight:'bold'}}>Xem Danh Sách</Text>
           </TouchableHighlight>
-        </View>
-        <View style={styles.btnXemRaVao}>
+        </Animated.View>
+        <Animated.View style={{width:null,height:null,alignItems:'center',marginRight:marginRight2}}>
           <TouchableHighlight onPress={this._onClickRaVao.bind(this)}
             style={{
               width:220,marginTop:10,height:50,alignItems:'center',justifyContent:'center',backgroundColor:"rgba(226,127,127,1)",borderRadius:10
           }}>
             <Text style={{fontSize:17,color:'white',fontWeight:'bold'}}>Xem Danh Sách Ra Vào</Text>
           </TouchableHighlight>
-        </View>
+        </Animated.View>
 
 
 
 
-        <View style={styles.btnXemRaVao}>
+        <Animated.View style={{width:null,height:null,alignItems:'center',marginLeft:marginLeft2}}>
           <TouchableHighlight onPress={this._onClickAddMonHoc.bind(this)}
             style={{
               width:220,marginTop:10,height:50,alignItems:'center',justifyContent:'center',backgroundColor:"rgba(226,127,127,1)",borderRadius:10
           }}>
             <Text style={{fontSize:17,color:'white',fontWeight:'bold'}}>Add mon hoc cho sv</Text>
           </TouchableHighlight>
-        </View>
+        </Animated.View>
 
-        <View style={styles.btnXemRaVao}>
+        <Animated.View style={{width:null,height:null,alignItems:'center',marginRight:marginRight2}}>
           <TouchableHighlight onPress={this._onClickDangKyMon.bind(this)}
             style={{
               width:220,marginTop:10,height:50,alignItems:'center',justifyContent:'center',backgroundColor:"rgba(226,127,127,1)",borderRadius:10
           }}>
             <Text style={{fontSize:17,color:'white',fontWeight:'bold'}}>Dang Ky Mon Hoc</Text>
           </TouchableHighlight>
-        </View>
+        </Animated.View>
 
 
 
