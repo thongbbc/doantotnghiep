@@ -25,10 +25,10 @@ export default class Menu extends Component {
     this.props.navigator.push({
          name:"listDanhSach",
          duLieu:{
-
          }
       })
   }
+
   setModalVisible(visible) {
     if (visible == true) {
       this.spring(visible)
