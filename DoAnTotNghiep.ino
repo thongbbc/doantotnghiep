@@ -565,7 +565,7 @@ int getFingerprintIDez() {
 
 
 void menu(int value,int value2) {
-  voltage = map(value,66,1014,0,4);//chuyển thang đo của value 
+  voltage = map(value,66,1014,0,5);//chuyển thang đo của value 
   Serial.println(voltage);
   if (flagMenu1 == true) {                                    //từ 0-1023 sang 0-5000 (mV)
     if((voltage == 0)){
@@ -794,7 +794,10 @@ void menu(int value,int value2) {
       Serial.println("didClickSetTime");
       setTime(gio, phut, 0, 1, daySet, monthSet, yearSet); // 12:30:45 CN 08-02-2015
       lastENTER = stateENTER;
-      flagMenu4 = true;
+      flagMenu4 = false;
+      flagMenu3 = false;
+      flagMenu2 = false;
+      flagMenu1 = true;
      }
      if((stateBACK != lastBACK) && (stateBACK == 0)){
       Serial.println("BACK Click"); 
