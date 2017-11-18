@@ -50,9 +50,10 @@ export default class ListDanhSach extends Component {
   }
   _onPress(data)
   {
+    console.log("danh sach gui "+data.id)
     this.props.navigator.push({
       name: "detailInfo",
-      duLieu: {
+      dulieu: {
         'id': data.id,
         'hoten': data.hoten
       }

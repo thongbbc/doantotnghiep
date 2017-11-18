@@ -1,10 +1,18 @@
 
-#include <Adafruit_Fingerprint.h>
+
+
+#include <easyFingerprint.h>
+
 #include <Wire.h>;
 #include <SoftwareSerial.h>
 #include <LiquidCrystal_I2C.h>;
 
-
+easyFingerprint fp1(&Serial1, true);
+easyFingerprint fp2(&Serial2, true);
+char fbuffer[688];
+uint16_t id = 500;
+unsigned long time1=0,time2=0;
+boolean flagScan = true;
 //Bien tro 1: A4 Bien Tro 2: A5
 //Nut enter : 2 Nut Back: 3
 //
@@ -14,14 +22,16 @@ const byte DS1307 = 0x68;
 const byte NumberOfFields = 7;
 /* khai báo các biến thời gian */
 int second, minute, hour, day, wday, month, year;
+  int distance1=-50,distance2=0;           // biến lưu khoảng cách
 
 
 
-uint8_t getFingerprintEnroll();
-uint16_t id;
+//uint8_t getFingerprintEnroll();
+//uint16_t id;
 LiquidCrystal_I2C lcd(0x3F,16,2);
 //SoftwareSerial Serial1(2, 3);
-Adafruit_Fingerprint finger = Adafruit_Fingerprint(&Serial1);
+//Adafruit_Fingerprint finger = Adafruit_Fingerprint(&Serial1);
+
 int daySet = 0;
 int monthSet = 0;
 int yearSet = 0;
@@ -69,7 +79,8 @@ void setup(){
   Wire.begin();
 //  setTime(12, 30, 45, 1, 8, 2, 15); // 12:30:45 CN 08-02-2015
   
-  Serial.begin(9600);  //Mở cổng Serial để giap tiếp | tham khảo Serial
+  Serial.begin(115200);
+  Serial3.begin(115200);
   pinMode(ENTER, INPUT_PULLUP);
   pinMode(BACK, INPUT_PULLUP);
   pinMode(trig,OUTPUT);   // chân trig sẽ phát tín hiệu
@@ -78,23 +89,8 @@ void setup(){
   lcd.init();       //Khởi động màn hình. Bắt đầu cho phép Arduino sử dụng màn hình
   lcd.backlight();   //Bật đèn nền
   lcd.display();
-  id =99;
   lcd.setCursor(0, 0);
     
-    //Check cam bien van tay
-    
-  //  finger.begin(57600);
-  //
-  //  if (finger.verifyPassword()) {
-  //    lcd.print("Found sensor!");
-  //    delay (1000);
-  //    deleteFingerprint(id);
-  //  } else {
-  //    lcd.print("No sensor found! ");
-  //    delay(1000);
-  //    while (1);
-  //  }
-  
   pinMode(button, INPUT);  //Cài đặt chân D11 ở trạng thái đọc dữ liệu
   pinMode(led,OUTPUT); // Cài đặt chân D2 dưới dạng OUTPUT
   pinMode(buttonsearch,INPUT_PULLUP);
@@ -102,9 +98,30 @@ void setup(){
   lcd.clear();
   lcd.print("Press admin password");
   delay(2000);
+  
+
+  while(!Serial);
+  fp1.init(57600);
+  fp2.init(57600);
+  fp1.erase();
+  fp2.erase();
+//  while(FP_SUCCESS != fp2.save(160));
+//  fp2.upload(160, fbuffer);
+//  fp1.download(160, fbuffer);
+  
 }
 void loop()
 {
+  if (time1 != 0 ) {
+    time2 = millis();
+    if ((time2 - time1) > 5000) {
+      flagScan = false;
+      time1 = 0;
+    }
+  }
+
+  
+  
   /* Đọc dữ liệu của DS1307 */
   //readDS1307();
   /* Hiển thị thời gian ra Serial monitor */
@@ -123,7 +140,6 @@ void loop()
   menu(value,value2);
   
   unsigned long duration; // biến đo thời gian
-  int distance;           // biến lưu khoảng cách
     
   /* Phát xung từ chân trig */
   digitalWrite(trig,0);   // tắt chân trig
@@ -134,24 +150,40 @@ void loop()
   
   /* Tính toán thời gian */
   // Đo độ rộng xung HIGH ở chân echo. 
-  duration = pulseIn(echo,HIGH);  
+  duration = pulseIn(echo,HIGH);
   // Tính khoảng cách đến vật.
-  distance = int(duration/2/29.412);
-  if (distance <=10) {
-    lcd.clear();
-    lcd.setCursor(0, 1);
-    lcd.print("Waiting for ");
-    lcd.setCursor(0, 1);
-    lcd.print("finger..");
-    delay(2000);
-    if (getFingerprintIDez() != -1)
-    {
-      Serial.println("ID DUng");
-      delay(9000);
-    } else {
-      Serial.println("ID ERROR");
+  distance2 = int(duration/2/29.412);
+    if (distance2 <=10 && ((distance2 - distance1) >=1 || ((distance1 - distance2) >=1))) {    
+      distance1 = distance2;
+      int dem = 0;
+      while(dem != 5 && id == 500)
+      {
+        dem++;
+        fp2.scan(&id);
+        fp1.scan(&id);
+        delay(1000);
+      }
+      delay(300);
+      if (id == 500) {
+        lcd.clear();
+        lcd.print("WRONG ID");
+        delay(1000);
+        lcd.clear();
+        lcd.print("WELCOME TO VLTH");
+      } else {
+        String request ="id="+String(id)+"&typeTrip=true";
+        char requestArray[255];
+        request.toCharArray(requestArray,255);
+        Serial3.write(requestArray);
+        id = 500;
+        lcd.clear();
+        lcd.print("SCAN SUCCESS");
+        delay(1000);
+        lcd.clear();
+        lcd.print("WELCOME TO VLTH");
+      }
     }
-  }
+  
   /* In kết quả ra Serial Monitor */
   //Serial.print(distance);
   //Serial.println("cm");
@@ -166,73 +198,7 @@ void loop()
 
 
 
-  
-  
-//  int statusNow = digitalRead(buttonsearch);
-//  if ((statusNow != statusPre) && statusNow == LOW){
-//
-//       digitalWrite(led,HIGH); // Đèn led sáng
-//
-//    statusPre = statusNow;
-//
-// lcd.clear();
-//      lcd.setCursor(0, 1);
-//        lcd.print("Waiting for ");
-//        lcd.setCursor(0, 1);
-//        lcd.print("finger..");
-//        delay(2000);
-//        if (getFingerprintIDez() != -1)
-//        {
-//            Serial.println("ID DUng");
-//          delay(9000);
-//        } else {
-//                Serial.println("ID ERROR");
-//          }
-//
-//    
-//    } else {
-//               digitalWrite(led,LOW); // Đèn led tat
-//    statusPre = statusNow;
-//
-//      }
-//
-//  
-//  lcd.setCursor(0,1);
-//    int buttonStatus = digitalRead(button);    //Đọc trạng thái button
-//  if (buttonStatus == HIGH) { // Nếu mà button bị nhấn
-//    flagClickButton = true;
-//   
-//  } else { // ngược lại
-//        flagClickButton = false;
-//  }
-//
-//  if (flagClickButton == !flagTemp) {
-//    lcd.clear();
-//  if (flagClickButton) {
-//       digitalWrite(led,HIGH); // Đèn led sáng
-//     lcd.setCursor(0, 1);
-//        lcd.print("Enrolling ID #");
-//        lcd.print(id);
-//        lcd.print("...");
-//        delay(1000);
-//        flagTemp = flagClickButton;
-//     getFingerprintEnroll();
-//
-//
-//   
-//    flagTemp = flagClickButton;
-//
-//
-//    
-//  } else {
-//        digitalWrite(led,LOW);
-//
-//
-//
-//        
-//    flagTemp = flagClickButton;
-//    }
-// }
+
 }
 
 void readDS1307()
@@ -300,274 +266,15 @@ void setTime(byte hr, byte min, byte sec, byte wd, byte d, byte mth, byte yr)
         Wire.endTransmission();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-uint8_t getFingerprintEnroll() {
-  int p = -1;
-  lcd.clear(); lcd.setCursor(0, 0);
-  lcd.print("Wating for "); lcd.setCursor(2, 1);
-  lcd.print("finger ID #");
-  lcd.print(id);
-  delay(1500);
-  while (p != FINGERPRINT_OK) {
-    p = finger.getImage();
-    switch (p) {
-      case FINGERPRINT_OK:
-        lcd.clear(); lcd.setCursor(1, 0);
-        lcd.print("Image taken");
-        delay(1000);
-        break;
-      case FINGERPRINT_NOFINGER:
-        lcd.clear(); lcd.setCursor(0, 0);
-        lcd.print(".");
-        break;
-      case FINGERPRINT_PACKETRECIEVEERR:
-        lcd.clear(); lcd.setCursor(0, 0);
-        lcd.print("Communication ");
-        lcd.setCursor(0, 1);
-        lcd.print("error");
-        break;
-      case FINGERPRINT_IMAGEFAIL:
-        lcd.clear(); lcd.setCursor(3, 0);
-        lcd.print("Imaging error");
-        break;
-      default:
-        lcd.clear(); lcd.setCursor(3, 0);
-        lcd.print("Unknown error");
-        break;
-    }
-  }
-  //  digitalWrite(buzzer,HIGH);delay(500);digitalWrite(buzzer,LOW);
-  // OK success!
-
-  p = finger.image2Tz(1);
-  switch (p) {
-    case FINGERPRINT_OK:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("Image converted");
-      break;
-    case FINGERPRINT_IMAGEMESS:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("Image too messy");
-      return p;
-    case FINGERPRINT_PACKETRECIEVEERR:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("Communication");
-      lcd.setCursor(0, 0);
-      lcd.print("error");
-      return p;
-    case FINGERPRINT_FEATUREFAIL:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("No fingerprint");
-      lcd.print("features");
-      return p;
-    case FINGERPRINT_INVALIDIMAGE:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("No fingerprint ");
-      lcd.print("features");
-      return p;
-    default:
-      lcd.clear(); lcd.setCursor(3, 0);
-      lcd.print("Unknown error");
-      return p;
-  }
-  delay(1000);
-  p = 0;
-  while (p != FINGERPRINT_NOFINGER) {
-    p = finger.getImage();
-  }
-  lcd.clear(); lcd.setCursor(0, 0);
-  lcd.print("Remove finger");
-  delay(1500);
-  p = -1;
-  lcd.clear(); lcd.setCursor(0, 0);
-  lcd.print("Place same finger");
-  lcd.setCursor(0, 1);
-  lcd.print("again");
-  delay(2000);
-  while (p != FINGERPRINT_OK) {
-    p = finger.getImage();
-    switch (p) {
-      case FINGERPRINT_OK:
-        lcd.clear(); lcd.setCursor(3, 0);
-        lcd.print("Image taken");
-        delay(1000);
-        break;
-      case FINGERPRINT_NOFINGER:
-        lcd.clear(); lcd.setCursor(0, 0);
-        lcd.print(".");
-        break;
-      case FINGERPRINT_PACKETRECIEVEERR:
-        lcd.clear(); lcd.setCursor(0, 0);
-        lcd.print("Communication");
-        lcd.print("error");
-        break;
-      case FINGERPRINT_IMAGEFAIL:
-        lcd.clear(); lcd.setCursor(1, 0);
-        lcd.print("Imaging error");
-        break;
-      default:
-        lcd.clear(); lcd.setCursor(2, 0);
-        lcd.print("Unknown error");
-        break;
-    }
-  }
-
-  // OK success!
-
-  p = finger.image2Tz(2);
-  switch (p) {
-    case FINGERPRINT_OK:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("Image converted");
-      delay(1000);
-      break;
-    case FINGERPRINT_IMAGEMESS:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("Image too messy");
-      return p;
-    case FINGERPRINT_PACKETRECIEVEERR:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("Communication");
-      lcd.print("error");
-      return p;
-    case FINGERPRINT_FEATUREFAIL:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("No fingerprint");
-      lcd.print("features");
-      return p;
-    case FINGERPRINT_INVALIDIMAGE:
-      lcd.clear(); lcd.setCursor(0, 0);
-      lcd.print("No fingerprint ");
-      lcd.print("features");
-      return p;
-    default:
-      lcd.clear(); lcd.setCursor(3, 0);
-      lcd.print("Unknown error");
-      return p;
-  }
-
-  // OK converted!
-  lcd.clear(); lcd.setCursor(0, 0);
-  lcd.print("Creating model");
-  lcd.setCursor(0, 1);
-  lcd.print("for #");  lcd.print(id);
-  delay(1000);
-
-  p = finger.createModel();
-  if (p == FINGERPRINT_OK) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Prints matched!");
-    delay(2000);
-  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Communication ");
-    lcd.print("error");
-    return p;
-  } else if (p == FINGERPRINT_ENROLLMISMATCH) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Fingerprints ");
-    lcd.setCursor(0, 1);
-    lcd.print("did not match");
-    delay(2000);
-    return p;
-  } else {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Unknown error");
-    return p;
-  }
-  lcd.clear(); lcd.setCursor(4, 0);
-  lcd.print("ID "); lcd.print(id);
-  delay(1000);
-  p = finger.storeModel(id);
-  if (p == FINGERPRINT_OK) {
-    lcd.setCursor(3, 1);
-    lcd.print("Stored!");
-    //    digitalWrite(buzzer,HIGH);delay(500);digitalWrite(buzzer,LOW);
-    delay(2500);
-  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-    lcd.print("Communication");
-    lcd.print("error");
-    return p;
-  } else if (p == FINGERPRINT_BADLOCATION) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Can't store in");
-    lcd.print("that location");
-    return p;
-  } else if (p == FINGERPRINT_FLASHERR) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Error writing");
-    lcd.print("to flash");
-    return p;
-  } else {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Unknown error");
-    return p;
-  }
-}
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-uint8_t deleteFingerprint(uint8_t id) {
-  uint8_t p = -1;
-
-  p = finger.deleteModel(id);
-
-  if (p == FINGERPRINT_OK) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Deleting...");
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Deleted!");
-    delay(2000);
-  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-    lcd.print("Communication error");
-    return p;
-  } else if (p == FINGERPRINT_BADLOCATION) {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Could not delete in that location");
-    return p;
-  } else if (p == FINGERPRINT_FLASHERR) {
-    lcd.print("Error writing to flash");
-    return p;
-  } else {
-    lcd.clear(); lcd.setCursor(0, 0);
-    lcd.print("Unknown error: 0x"); lcd.print(p, HEX);
-    return p;
-  }
-}
-
-
-
-// returns -1 if failed, otherwise returns ID #
-int getFingerprintIDez() {
-  uint8_t p = finger.getImage();
-  if (p != FINGERPRINT_OK)  return -1;
-
-  p = finger.image2Tz();
-  if (p != FINGERPRINT_OK)  return -1;
-
-  p = finger.fingerFastSearch();
-  if (p != FINGERPRINT_OK)  return -1;
-
-  // found a match!
-  lcd.print("Found ID #"); lcd.print(finger.fingerID);
-  lcd.clear(); lcd.setCursor(0, 0);
-  lcd.print("Accuracy of "); lcd.setCursor(0, 1); lcd.print(finger.confidence); lcd.print("/250");
-  delay(1000);
-  lcd.clear();
-  lcd.print("Hello ");
-  lcd.print(finger.fingerID);
-  return finger.fingerID;
-}
 
 
 
 
 void menu(int value,int value2) {
-  voltage = map(value,66,1014,0,5);//chuyển thang đo của value 
   Serial.println(voltage);
-  if (flagMenu1 == true) {                                    //từ 0-1023 sang 0-5000 (mV)
+  if (flagMenu1 == true) {    
+      voltage = map(value,66,1014,0,5);//chuyển thang đo của value 
+//từ 0-1023 sang 0-5000 (mV)
     if((voltage == 0)){
       b = true;
       c = true;
@@ -597,11 +304,11 @@ void menu(int value,int value2) {
       }
       if((stateENTER != lastENTER) && (stateENTER == 0)){
         lastENTER = stateENTER;
-        voltage = map(value,66,1014,0,4);
+        voltage = 1;
         flagMenu1 = false;
         flagMenu0 = false;
         flagMenu2 = true; 
-        Serial.println(voltage);
+//        Serial.println(voltage);
       }
     } else 
     if((voltage == 2)){
@@ -689,17 +396,32 @@ void menu(int value,int value2) {
       Serial.println("Click scane");
     } else if (voltage == 1) {
       Serial.println("Click Create");
-      int voltage2 = map(value,0,1014,0,69);   //chuyển thang đo của value 
-      int voltage3 = map(value2,66,1014,0,9);
+      int voltage2 = map(value,0,1014,0,15);   //chuyển thang đo của value 
+      int voltage3 = map(value2,0,1014,0,9);
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Choose ID: #");
       if (voltage2 < 0 ) {
         voltage2 = 0;
       }
-      Serial.println(voltage2*10 + voltage3);
+      int valueNumber = voltage2*10 + voltage3;
+      Serial.println(valueNumber);
       lcd.print(voltage2);
       lcd.print(voltage3);
+      
+
+
+      if((stateENTER != lastENTER) && (stateENTER == 0)){
+        
+        while(FP_SUCCESS != fp2.save(valueNumber));
+        fp2.upload(valueNumber, fbuffer);
+         fp1.download(valueNumber, fbuffer);
+        flagMenu1 = true;
+        flagMenu2 = false;
+        lastENTER = stateENTER;  
+      }
+       
+
       
       if((stateBACK != lastBACK) && (stateBACK == 0)){
         lastENTER = stateENTER;

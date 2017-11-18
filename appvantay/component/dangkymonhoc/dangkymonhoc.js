@@ -76,7 +76,9 @@ export default class DangKyMonHoc extends Component {
           })
         })
         this.setState({dataSource:dulieu,refreshing:false,animating:false})
-      }
+      }else 
+      this.setState({refreshing:false,animating:false})
+      
     }).catch((error) => {
       console.error(error);
     });

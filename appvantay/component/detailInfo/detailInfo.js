@@ -24,7 +24,7 @@ export default class DetailInfo extends Component {
   {
     this.props.navigator.push({
         name:"listDetail",
-        duLieu: {
+        dulieu: {
           'id':this.props.id,
           'hoten':this.props.hoten
         }
