@@ -58,7 +58,6 @@ void loop() {
         unsigned long currentMillis = millis(), previousMillis = millis();
         
         while(!client.available()){
-        
           if( (currentMillis - previousMillis) > interval ){
         
             Serial.println("Timeout");

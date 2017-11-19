@@ -1,3 +1,5 @@
+#include <EEPROM.h>
+
 
 
 
@@ -6,6 +8,52 @@
 #include <Wire.h>;
 #include <SoftwareSerial.h>
 #include <LiquidCrystal_I2C.h>;
+#include <Keypad.h>
+#include <Key.h>
+
+      
+    const byte rows = 4; //số hàng
+    const byte columns = 4; //số cột
+    int holdDelay = 700; //Thời gian trễ để xem là nhấn 1 nút nhằm tránh nhiễu
+    int n = 3; // 
+    int state = 0; //nếu state =0 ko nhấn,state =1 nhấn thời gian nhỏ , state = 2 nhấn giữ lâu
+    char key = 0;
+    String fullKey = "";
+    //Định nghĩa các giá trị trả về
+    char keys[rows][columns] =
+    {
+      {'1', '2', '3', 'A'},
+      {'4', '5', '6', 'B'},
+      {'7', '8', '9', 'C'},
+      {'*', '0', '#', 'D'},
+    };
+     
+    byte rowPins[rows] = {32, 33, 34, 35}; //Cách nối chân với Arduino
+    byte columnPins[columns] = {36, 37, 38, 39};
+     
+    //cài đặt thư viện keypad
+    Keypad keypad = Keypad(makeKeymap(keys), rowPins, columnPins, rows, columns);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 easyFingerprint fp1(&Serial1, true);
 easyFingerprint fp2(&Serial2, true);
@@ -76,11 +124,17 @@ int statusPre = LOW;
 
 
 void setup(){
+  EEPROM.write(0, 11);
+  EEPROM.write(1,11);
+  
+  
+  
   Wire.begin();
 //  setTime(12, 30, 45, 1, 8, 2, 15); // 12:30:45 CN 08-02-2015
   
   Serial.begin(115200);
   Serial3.begin(115200);
+ 
   pinMode(ENTER, INPUT_PULLUP);
   pinMode(BACK, INPUT_PULLUP);
   pinMode(trig,OUTPUT);   // chân trig sẽ phát tín hiệu
@@ -120,7 +174,7 @@ void loop()
     }
   }
 
-  
+
   
   /* Đọc dữ liệu của DS1307 */
   //readDS1307();
@@ -538,28 +592,75 @@ void menu(int value,int value2) {
       }
      }
    } else if (flagMenu5 == true) {
-     int pass1 = map(value,0,1014,0,99);
-     int pass2 = map(value2,0,1014,0,99);
+//     int pass1 = map(value,0,1014,0,99);
+//     int pass2 = map(value2,0,1014,0,99);
+      char temp = keypad.getKey();     
+      if ((int)keypad.getState() ==  PRESSED) {
+        if (temp != 0) {
+          if (temp == 'D') {
+            if(fullKey != "") {
+              fullKey = fullKey.substring(0,fullKey.length()-1);
+            }
+          } else {
+            key = temp;
+            if (fullKey.length()<=3) {
+              fullKey=fullKey+key;
+            }
+          }
+        }
+      }
+      delay(100);
+
+
+
+
+
+
      lcd.clear();
      lcd.setCursor(0,0);
-     lcd.print("Pass Change:");lcd.print(pass1);lcd.print(pass2);
-     if((stateBACK != lastBACK) && (stateBACK == 0)){
-      Serial.println("BACK Click"); 
-      lastBACK = stateBACK;
-      flagMenu1 = true;
-      flagMenu2 = false;
-      flagMenu5 = false;
-      lcd.clear();
-      if (a == false) {
-        a = true;
-      } else if (b == false) {
-        b = true;  
-      } else if (c == false) {
-        c = true;  
-      } else {
-          d = true;
-      }
+     lcd.print("Pass Change:");lcd.print(fullKey);
+     if((stateENTER != lastENTER) && (stateENTER == 0)){
+        int numberKey = fullKey.toInt();
+        int pass1 = numberKey /100;
+        int pass2 = numberKey %100;
+        EEPROM.write(0,pass1);
+        EEPROM.write(1,pass2);
+        
+        fullKey = "";
+        lastENTER = stateENTER;  
+        flagMenu1 = true;
+        flagMenu2 = false;
+        flagMenu5 = false;
+        lcd.clear();
+        if (a == false) {
+          a = true;
+        } else if (b == false) {
+          b = true;  
+        } else if (c == false) {
+          c = true;  
+        } else {
+            d = true;
+        }
      }
+     if((stateBACK != lastBACK) && (stateBACK == 0)){
+        Serial.println("BACK Click"); 
+        fullKey = "";
+        lastBACK = stateBACK;
+        flagMenu1 = true;
+        flagMenu2 = false;
+        flagMenu5 = false;
+        lcd.clear();
+        if (a == false) {
+          a = true;
+        } else if (b == false) {
+          b = true;  
+        } else if (c == false) {
+          c = true;  
+        } else {
+            d = true;
+        }
+      }
+      
    }
 
   lastENTER = stateENTER;  
@@ -570,24 +671,48 @@ void menu(int value,int value2) {
 
 void nhapMatKhau(int value,int value2) {
   if ((flagMenu0 == true)) {
-    int voltage2 = map(value,0,1014,0,99);   //chuyển thang đo của value 
-    int voltage3 = map(value2,0,1014,0,99);
+//    int voltage2 = map(value,0,1014,0,99);   //chuyển thang đo của value 
+//    int voltage3 = map(value2,0,1014,0,99);
+    char temp = keypad.getKey();     
+      if ((int)keypad.getState() ==  PRESSED) {
+        if (temp != 0) {
+          if (temp == 'D') {
+            if(fullKey != "") {
+              fullKey = fullKey.substring(0,fullKey.length()-1);
+            }
+          } else {
+            key = temp;
+            if (fullKey.length()<=3) {
+              fullKey=fullKey+key;
+            }
+          }
+        }
+      }
+      delay(100);
+
+
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Password:");
-    if (voltage2 < 0 ) {
-      voltage2 = 0;
-    }
-    Serial.println(voltage2*10 + voltage3);
-    lcd.print(voltage2);
-    lcd.print(voltage3);
+    lcd.print(fullKey);
+//    if (voltage2 < 0 ) {
+//      voltage2 = 0;
+//    }
+//    Serial.println(voltage2*10 + voltage3);
+//    lcd.print(voltage2);
+//    lcd.print(voltage3);
     if((stateENTER != lastENTER) && (stateENTER == 0)){
-      if (((voltage2*100)+(voltage3)) != 7777) {
-        lcd.clear();
-        Serial.println(voltage2+voltage3);
+//      if (((voltage2*100)+(voltage3)) != 7777) {
+//        lcd.clear();
+//        Serial.println(voltage2+voltage3);
+      int pass1 = EEPROM.read(0);
+      int pass2 = EEPROM.read(1);
+      int fullPass = pass1*100 + pass2;
+      if (fullKey.toInt() != fullPass){
         lcd.print("Nhap sai password");
         delay(1000);
       } else {
+        fullKey = "";
         flagMenu1 = true;
         flagMenu2 = false;
         flagMenu0 = false;
