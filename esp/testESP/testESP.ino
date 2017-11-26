@@ -54,27 +54,27 @@ void loop() {
         delay(10);
   
         // Read all the lines of the reply from server and print them to Serial
-        long interval = 2000;
-        unsigned long currentMillis = millis(), previousMillis = millis();
-        
-        while(!client.available()){
-          if( (currentMillis - previousMillis) > interval ){
-        
-            Serial.println("Timeout");
-            client.stop();     
-            return;
-          }
-          currentMillis = millis();
-        }
-        
-        while (client.connected())
-        {
-          if ( client.available() )
-          {
-            char str=client.read();
-            Serial.print(str);
-          }      
-        }
+//        long interval = 2000;
+//        unsigned long currentMillis = millis(), previousMillis = millis();
+//        
+//        while(!client.available()){
+//          if( (currentMillis - previousMillis) > interval ){
+//        
+//            Serial.println("Timeout");
+//            client.stop();     
+//            return;
+//          }
+//          currentMillis = millis();
+//        }
+//        
+//        while (client.connected())
+//        {
+//          if ( client.available() )
+//          {
+//            char str=client.read();
+//            Serial.print(str);
+//          }      
+//        }
      
     }
   }

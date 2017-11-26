@@ -10,7 +10,13 @@
 #include <LiquidCrystal_I2C.h>;
 #include <Keypad.h>
 #include <Key.h>
-
+#include <SD.h>
+#define SD_ChipSelectPin 53  //sử dụng SS Pin 53 trên Mega2560
+//#define SD_ChipSelectPin 4  //thường sử dụng digital pin 4 trên arduino nano 328, hoặc chân tùy ý
+#include <SPI.h>
+String file_name = "test.csv";
+//đối tượng file
+File myFile;
       
     const byte rows = 4; //số hàng
     const byte columns = 4; //số cột
@@ -72,6 +78,8 @@ const byte NumberOfFields = 7;
 int second, minute, hour, day, wday, month, year;
   int distance1=-50,distance2=0;           // biến lưu khoảng cách
 
+  int distance3=-50,distance4=0;           // biến lưu khoảng cách
+
 
 
 //uint8_t getFingerprintEnroll();
@@ -112,6 +120,10 @@ const int trig = 10;     // chân trig của HC-SR04
 const int echo = 9;     // chân echo của HC-SR04
 
 
+
+const int trig2 = 12;     // chân trig của HC-SR04
+const int echo2 = 11;     // chân echo của HC-SR04
+
 int button = 7;
 int buttonsearch = 8;
 int led = 5;
@@ -124,6 +136,16 @@ int statusPre = LOW;
 
 
 void setup(){
+    Serial3.begin(115200);
+//    Serial.begin(115200);
+  Serial.print("Initializing SD card...");
+
+  if (!SD.begin(SD_ChipSelectPin)) {
+    Serial.println("initialization failed!");
+  }
+  Serial.println("initialization done.");
+
+
   EEPROM.write(0, 11);
   EEPROM.write(1,11);
   
@@ -132,13 +154,17 @@ void setup(){
   Wire.begin();
 //  setTime(12, 30, 45, 1, 8, 2, 15); // 12:30:45 CN 08-02-2015
   
-  Serial.begin(115200);
-  Serial3.begin(115200);
  
   pinMode(ENTER, INPUT_PULLUP);
   pinMode(BACK, INPUT_PULLUP);
   pinMode(trig,OUTPUT);   // chân trig sẽ phát tín hiệu
   pinMode(echo,INPUT);    // chân echo sẽ nhận tín hiệu
+
+  
+  pinMode(trig2,OUTPUT);   // chân trig sẽ phát tín hiệu
+  pinMode(echo2,INPUT);    // chân echo sẽ nhận tín hiệu
+
+  
   //LCD
   lcd.init();       //Khởi động màn hình. Bắt đầu cho phép Arduino sử dụng màn hình
   lcd.backlight();   //Bật đèn nền
@@ -157,8 +183,8 @@ void setup(){
   while(!Serial);
   fp1.init(57600);
   fp2.init(57600);
-  fp1.erase();
-  fp2.erase();
+//  fp1.erase();
+//  fp2.erase();
 //  while(FP_SUCCESS != fp2.save(160));
 //  fp2.upload(160, fbuffer);
 //  fp1.download(160, fbuffer);
@@ -194,29 +220,39 @@ void loop()
   menu(value,value2);
   
   unsigned long duration; // biến đo thời gian
-    
+      unsigned long duration2; // biến đo thời gian
+
   /* Phát xung từ chân trig */
-  digitalWrite(trig,0);   // tắt chân trig
-  delayMicroseconds(2);
-  digitalWrite(trig,1);   // phát xung từ chân trig
-  delayMicroseconds(5);   // xung có độ dài 5 microSeconds
-  digitalWrite(trig,0);   // tắt chân trig
   
-  /* Tính toán thời gian */
+//
+//
+//
+ 
+
+
+  digitalWrite(trig2,0);   // tắt chân trig
+  delayMicroseconds(2);
+  digitalWrite(trig2,1);   // phát xung từ chân trig
+  delayMicroseconds(5);   // xung có độ dài 5 microSeconds
+  digitalWrite(trig2,0);   // tắt chân trig
+
+//  
+//  /* Tính toán thời gian */
   // Đo độ rộng xung HIGH ở chân echo. 
-  duration = pulseIn(echo,HIGH);
+  duration2 = pulseIn(echo2,HIGH);
   // Tính khoảng cách đến vật.
-  distance2 = int(duration/2/29.412);
-    if (distance2 <=10 && ((distance2 - distance1) >=1 || ((distance1 - distance2) >=1))) {    
-      distance1 = distance2;
+  distance4 = int(duration2/2/29.412);
+  Serial.println("distance4:" + String(distance4));
+if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >=1))) {    
+      distance3 = distance4;
       int dem = 0;
-      while(dem != 5 && id == 500)
-      {
-        dem++;
+//      while(dem != 5 && id == 500)
+//      {
+//        dem++;
         fp2.scan(&id);
         fp1.scan(&id);
         delay(1000);
-      }
+//      }
       delay(300);
       if (id == 500) {
         lcd.clear();
@@ -225,6 +261,92 @@ void loop()
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
       } else {
+      myFile = SD.open(file_name, FILE_WRITE);
+      
+        // if the file opened okay, write to it:
+        if (myFile) {
+          Serial.print("Writing to test.csv...");
+          readDS1307();
+          String data = String(id)+"-ra-"+String(hour)+":"+String(minute)+":"+String(second)+"-"+String(day)+"/"+String(month)+"/"+String(year);
+          myFile.println(data);
+          // close the file:
+          myFile.close();
+          Serial.println("done.");
+        } else {
+          // if the file didn't open, print an error:
+          Serial.println("error opening test.csv");
+        }
+
+        
+        String request ="id="+String(id)+"&typeTrip=false";
+        char requestArray[255];
+        request.toCharArray(requestArray,255);
+        Serial3.write(requestArray);
+        id = 500;
+        lcd.clear();
+        lcd.print("SCAN SUCCESS");
+        delay(1000);
+        lcd.clear();
+        lcd.print("WELCOME TO VLTH");
+      }
+    }
+
+
+
+
+
+
+
+  delay(20);
+  
+
+  digitalWrite(trig,0);   // tắt chân trig
+  delayMicroseconds(2);
+  digitalWrite(trig,1);   // phát xung từ chân trig
+  delayMicroseconds(5);   // xung có độ dài 5 microSeconds
+  digitalWrite(trig,0);   // tắt chân trig
+  /* Tính toán thời gian */
+  // Đo độ rộng xung HIGH ở chân echo. 
+  duration = pulseIn(echo,HIGH);
+  // Tính khoảng cách đến vật.
+  distance2 = int(duration/2/29.412);
+    Serial.println("distance2:" + String(distance2));
+
+    if (distance2 <=10 && ((distance2 - distance1) >=1 || ((distance1 - distance2) >=1))) {    
+      distance1 = distance2;
+      int dem = 0;
+//      while(dem != 5 && id == 500)
+//      {
+//        dem++;
+        fp2.scan(&id);
+        fp1.scan(&id);
+        delay(1000);
+//      }
+      delay(300);
+      if (id == 500) {
+        lcd.clear();
+        lcd.print("WRONG ID");
+        delay(1000);
+        lcd.clear();
+        lcd.print("WELCOME TO VLTH");
+      } else {
+      myFile = SD.open(file_name, FILE_WRITE);
+      
+        // if the file opened okay, write to it:
+        if (myFile) {
+          Serial.print("Writing to test.csv...");
+          readDS1307();
+          String data = String(id)+"-vao-"+String(hour)+":"+String(minute)+":"+String(second)+"-"+String(day)+"/"+String(month)+"/"+String(year);
+          myFile.println(data);
+          // close the file:
+          myFile.close();
+          Serial.println("done.");
+        } else {
+          // if the file didn't open, print an error:
+          Serial.println("error opening test.csv");
+        }
+
+        
         String request ="id="+String(id)+"&typeTrip=true";
         char requestArray[255];
         request.toCharArray(requestArray,255);
@@ -237,6 +359,12 @@ void loop()
         lcd.print("WELCOME TO VLTH");
       }
     }
+
+
+
+
+
+    
   
   /* In kết quả ra Serial Monitor */
   //Serial.print(distance);
@@ -373,13 +501,16 @@ void menu(int value,int value2) {
       if (c == true){
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print("3/Remove finger");
-        Serial.println("Remove finger");      
+        lcd.print("3/Erase finger");
+        Serial.println("Erase finger");      
         c = false;
       }
       if((stateENTER != lastENTER) && (stateENTER == 0)){
         lastENTER = stateENTER;
-        
+        fp1.erase();
+        fp2.erase(); 
+        lcd.print("Success");
+        delay(1000);
       }
     } else
     if((voltage == 3)){
@@ -531,7 +662,7 @@ void menu(int value,int value2) {
       delay(20);
     }
   } else if (flagMenu3 == true) {
-    int nam = map(value,0,1014,2017,3000);
+    int nam = map(value,0,1014,1990,2050);
     lcd.clear();
     lcd.setCursor(0,0);
     yearSet = nam;
