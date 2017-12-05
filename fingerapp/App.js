@@ -14,6 +14,7 @@ import AllStudentScreen from './screen/allStudentScreen'
 import ListSubjectScreen from './screen/listsubject'
 import AddSubjectScreen from './screen/addSubject'
 import AddStudentScreen from './screen/addStudent'
+import RegisterSubjectScreen from './screen/registerSubject'
 
 import {Provider} from 'react-redux';
 import {createStore,applyMiddleware} from 'redux';
@@ -56,6 +57,11 @@ const Navigator = StackNavigator({
     }),
   },
   AddStudentScreen: {screen: AddStudentScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+    }),
+  },
+  RegisterSubjectScreen: {screen: RegisterSubjectScreen,
     navigationOptions: ({navigation}) => ({
       header: null,
     }),

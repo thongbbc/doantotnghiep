@@ -50,7 +50,7 @@ class ListSubjectScreen extends Component {
                 <View style = {{flex:1}}>
                 <LinearGradient style = {{flex:1}} colors = {['#F58163','#945A4A','#372416']}>
                     <FlatList
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.tenMonHoc}
                         style = {{flex:1}}
                         ItemSeparatorComponent = {this.FlatListItemSeparator}
                         data={data}
