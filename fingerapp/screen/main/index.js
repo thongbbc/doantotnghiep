@@ -142,6 +142,7 @@ class MainScreen extends Component {
                             data={[{title:'Information all students'}, 
                                 {title: 'Information trip'},
                                 {title: 'Add student'},
+                                {title: 'List subject'},
                                 {title: 'Add subject'},
                                 {title: 'Register subject for student'},
                             ]}
@@ -176,7 +177,7 @@ class MainScreen extends Component {
                                         </TouchableOpacity>
                                     )}
                                     case 2:{return(
-                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('AllStudentScreen');}}>                                        
+                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('AddStudentScreen');}}>                                        
                                             <View key = {index} style = {{padding:20,justifyContent:'space-between',alignItems:'center',
                                             backgroundColor:color,width,height:50,flexDirection:'row'}}>
                                                 <Text>{item.title}</Text>
@@ -186,7 +187,7 @@ class MainScreen extends Component {
                                         </TouchableOpacity>
                                     )}
                                     case 3:{return(
-                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('AllStudentScreen');}}>                                        
+                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('ListSubjectScreen');}}>                                        
                                             <View key = {index} style = {{padding:20,justifyContent:'space-between',alignItems:'center',
                                             backgroundColor:color,width,height:50,flexDirection:'row'}}>
                                                 <Text>{item.title}</Text>
@@ -196,6 +197,16 @@ class MainScreen extends Component {
                                         </TouchableOpacity>
                                     )}
                                     case 4:{return(
+                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('AddSubjectScreen');}}>                                        
+                                            <View key = {index} style = {{padding:20,justifyContent:'space-between',alignItems:'center',
+                                            backgroundColor:color,width,height:50,flexDirection:'row'}}>
+                                                <Text>{item.title}</Text>
+                                                <MaterialIcons name="subject" size={30} color="rgba(0,0,0,1)" />
+                                                
+                                            </View>
+                                        </TouchableOpacity>
+                                    )}
+                                    case 5:{return(
                                         <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('AllStudentScreen');}}>                                        
                                             <View key = {index} style = {{padding:20,justifyContent:'space-between',alignItems:'center',
                                             backgroundColor:color,width,height:50,flexDirection:'row'}}>

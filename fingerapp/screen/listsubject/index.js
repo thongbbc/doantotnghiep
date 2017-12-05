@@ -9,16 +9,17 @@ import { EvilIcons,Ionicons,Entypo,Foundation,MaterialIcons, FontAwesome } from 
 import {LinearGradient} from 'expo'
 import {width,height} from '../../helperScreen'
 import {connect} from 'react-redux';
-import {fetchDataAllStudent} from '../../actions/fetchData'
+import {fetchDataAllSubject,fetchDataAllStudent} from '../../actions/fetchData'
 import Header from '../../component/header'
 import Indicator from '../../component/indicator'
+import { allSubject } from '../../reducer/fetchDataReducer/index';
 
-class AllStudentScreen extends Component {
+class ListSubjectScreen extends Component {
     constructor(props) {
         super(props)
     }    
     componentDidMount() {
-        this.props.fetchDataAllStudent()
+        this.props.fetchDataAllSubject()
     }
 
     FlatListItemSeparator = () => {
@@ -33,8 +34,8 @@ class AllStudentScreen extends Component {
         );
     }
     render() {
-        const {allStudent} = this.props
-        const {data} = allStudent
+        const {allSubject} = this.props
+        const {data} = allSubject
         return(
             <View style = {{flex:1}}>
                 <Header>
@@ -44,7 +45,7 @@ class AllStudentScreen extends Component {
                         <Ionicons name="ios-arrow-round-back" size={30} color="white" />
                     </TouchableOpacity>
                     <View style = {{flex:1,justifyContent:'center',alignItems:'center',paddingBottom:10}}
-                    ><Text style = {{color:'white',fontSize:18}}>Information all students</Text></View>
+                    ><Text style = {{color:'white',fontSize:18}}>List subject</Text></View>
                 </Header>
                 <View style = {{flex:1}}>
                 <LinearGradient style = {{flex:1}} colors = {['#F58163','#945A4A','#372416']}>
@@ -55,18 +56,19 @@ class AllStudentScreen extends Component {
                         data={data}
                         renderItem={({item,index}) =>
                             <View style = {{width,flexDirection:'row',backgroundColor:'rgba(255,255,255,0.2)'}}>
-                                <View style = {{width:60,height:60,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
-                                    <Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>{item.id}</Text>
+                                <View style = {{width:width/3,height:60,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
+                                    <Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>{item.tenMonHoc}</Text>
                                 </View>
                                 <View style = {{paddingLeft:10,justifyContent:'center'}}>
-                                    <Text style = {{backgroundColor:'transparent',marginBottom:5,fontSize:13,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>{item.hoten}</Text>
-                                    <Text style = {{backgroundColor:'transparent',fontSize:10,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>MSSV:{item.mssv}</Text>
+                                    <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Day of week: {item.thu}</Text>
+                                    <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Date: {item.dateStart} - {item.dateEnd}</Text>
+                                    <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Time: {item.timeStart} - {item.timeEnd}</Text>
                                 </View>
                             </View>
                         }
                     />
                 </LinearGradient>
-                {Indicator(allStudent.isFetching)}
+                {Indicator(allSubject.isFetching)}
                 </View>
             </View>
         )
@@ -76,13 +78,14 @@ class AllStudentScreen extends Component {
 const mapStateToProps = (state) => {
     return {
         animating:state.animatingDrawer,
-        allStudent:state.allStudent
+        allStudent:state.allStudent,
+        allSubject:state.allSubject
     }
 };
 
 function mapDispatchToProps (dispatch) {
     return {
-      fetchDataAllStudent: () => dispatch(fetchDataAllStudent())
+        fetchDataAllSubject: () => dispatch(fetchDataAllSubject())
     }
   }
-export default connect (mapStateToProps,mapDispatchToProps)(AllStudentScreen);
+export default connect (mapStateToProps,mapDispatchToProps)(ListSubjectScreen);
