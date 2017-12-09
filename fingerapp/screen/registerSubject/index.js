@@ -9,7 +9,7 @@ import { EvilIcons,Ionicons,Entypo,Foundation,MaterialIcons, FontAwesome ,Materi
 import {LinearGradient} from 'expo'
 import {width,height} from '../../helperScreen'
 import {connect} from 'react-redux';
-import {fetchDataAllSubject,fetchDataAllStudent} from '../../actions/fetchData'
+import {fetchDataAllSubject,fetchDataAllStudent,fetchDataRegisterSubject,changeCheck} from '../../actions/fetchData'
 import Header from '../../component/header'
 import Indicator from '../../component/indicator'
 import DatePicker from 'react-native-datepicker'
@@ -27,7 +27,7 @@ class RegisterSubjectScreen extends Component {
             dateStart:'',
             dateEnd:'',
             visibleModal:false,
-            selectedSubject:''
+            selectedSubject:'Click for select a subject'
         }
     }    
     componentDidMount() {
@@ -48,7 +48,7 @@ class RegisterSubjectScreen extends Component {
     }
     render() {
         const currentTime = new Date()
-        const {allSubject,allStudent} = this.props
+        const {allSubject,allStudent,getRegisterSubjectData,changeCheck} = this.props
         const {data} = allSubject
         const {visibleModal,selectedSubject} = this.state
         return(
@@ -69,17 +69,17 @@ class RegisterSubjectScreen extends Component {
                         <TouchableOpacity onPress = {()=>{
                             this.setState({visibleModal:true})}}>
                             <View style = {{width:width-40,height:40,backgroundColor:'rgba(255,255,255,0.2)',
-                                borderRadius:20,justifyContent:'center',alignItems:'center'
+                                borderRadius:20,borderWidth:1,borderColor:'white',justifyContent:'center',alignItems:'center'
                             }}>
                                 <Text style = {{color:'white',fontSize:18,fontWeight:'500'}}>{selectedSubject}</Text>
                             </View>
                         </TouchableOpacity>
                         {
-                            selectedSubject?<FlatList
+                            selectedSubject!='Click for select a subject'?<FlatList
                             keyExtractor={item => item.id}
                             style = {{flex:1,top:30}}
                             ItemSeparatorComponent = {this.FlatListItemSeparator}
-                            data={allStudent.data}
+                            data={getRegisterSubjectData.data}
                             renderItem={({item,index}) =>
                                 <View style = {{width,flexDirection:'row',justifyContent:'space-between',backgroundColor:'rgba(255,255,255,0.2)',alignItems:'center'}}>
                                     <View style = {{flexDirection:'row'}}>
@@ -91,9 +91,14 @@ class RegisterSubjectScreen extends Component {
                                             <Text style = {{backgroundColor:'transparent',fontSize:10,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>MSSV:{item.mssv}</Text>
                                         </View>
                                     </View>
-                                    <TouchableOpacity style = {{right:10,width:40,height:40,justifyContent:'center',alignItems:'center'}}>
+                                    <TouchableOpacity 
+                                    onPress = {() => {
+                                        changeCheck(index)
+                                    }}
+                                    style = {{right:10,width:40,height:40,justifyContent:'center',alignItems:'center'}}>
                                         <View >
-                                            <Entypo name="check" size={30} color="white" />
+                                            {item.check?<Entypo name="check" size={30} color="black" />:<Entypo name="check" size={30} color="white" />}
+                                            
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -129,7 +134,11 @@ class RegisterSubjectScreen extends Component {
                             ItemSeparatorComponent = {this.FlatListItemSeparator}
                             data={data}
                             renderItem={({item,index}) =>
-                            <TouchableOpacity onPress = {()=>{this.setState({selectedSubject:item.tenMonHoc,visibleModal:false})}}>
+                            <TouchableOpacity onPress = {()=>{
+                                this.setState({selectedSubject:item.tenMonHoc,visibleModal:false})
+                                this.props.fetchDataRegisterSubject(item.tenMonHoc)
+                                console.log(this.props.getRegisterSubjectData)
+                                }}>
                                 <View style = {{width:width-40,flexDirection:'row',backgroundColor:'rgba(255,255,255,0.2)'}}>
                                     <View style = {{width:width/4,height:60,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
                                         <Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>{item.tenMonHoc}</Text>
@@ -145,7 +154,7 @@ class RegisterSubjectScreen extends Component {
                             />
                         </View>
                     </Modal>
-                    {Indicator(allSubject.isFetching && allStudent.isFetching)}
+                    {Indicator(getRegisterSubjectData.isFetching && getRegisterSubjectData.isFetching)}
                 </LinearGradient>
                 </View>
             </View>
@@ -157,14 +166,17 @@ const mapStateToProps = (state) => {
     return {
         animating:state.animatingDrawer,
         allStudent:state.allStudent,
-        allSubject:state.allSubject
+        allSubject:state.allSubject,
+        getRegisterSubjectData:state.getRegisterSubjectData
     }
 };
 
 function mapDispatchToProps (dispatch) {
     return {
         fetchDataAllSubject: () => dispatch(fetchDataAllSubject()),
-        fetchDataAllStudent: () => dispatch(fetchDataAllStudent())
+        fetchDataAllStudent: () => dispatch(fetchDataAllStudent()),
+        fetchDataRegisterSubject: (monHoc)=>dispatch(fetchDataRegisterSubject(monHoc)),
+        changeCheck: (index) => dispatch(changeCheck(index))
         
     }
   }

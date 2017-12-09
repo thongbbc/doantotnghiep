@@ -124,6 +124,7 @@ class MainScreen extends Component {
                         { rotateY: animationMain33},
                     ]
                 }}>
+                <LinearGradient style = {{width,height}} colors = {['#F58163','#945A4A','#372416']}>
                     <Header>
                         <TouchableOpacity onPress = {()=>{
                             this.props.onOrOffAnimating(!this.props.animating)
@@ -135,7 +136,7 @@ class MainScreen extends Component {
                         </View>
                         <View style = {{width:30,height:30}}/>
                     </Header>
-                    <View style = {{flex:1,backgroundColor:'white'}}>
+                    <View style = {{backgroundColor:'white',flex:1}}>
                         <FlatList
                             keyExtractor={item => item.title}
                             style = {{flex:1}}
@@ -220,6 +221,7 @@ class MainScreen extends Component {
                             }}
                         />
                     </View>
+                    </LinearGradient>
                     {this.props.animating==true?(
                         <TouchableWithoutFeedback 
                         onPress = {()=>{this.props.onOrOffAnimating(!this.props.animating)}}
