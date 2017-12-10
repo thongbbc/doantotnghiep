@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput,
-    Animated,Easing,FlatList
+    Animated,Easing,FlatList,Alert,Keyboard,TouchableWithoutFeedback
     , KeyboardAvoidingView , TouchableOpacity } from 'react-native';
 import {
   StackNavigator,
@@ -58,6 +58,7 @@ class AddStudentScreen extends Component {
                     <View style = {{flex:1,justifyContent:'center',alignItems:'center',paddingBottom:10}}
                     ><Text style = {{color:'white',fontSize:18}}>Add student</Text></View>
                 </Header>
+                <TouchableWithoutFeedback onPress = {()=>Keyboard.dismiss()}>
                 <View style = {{flex:1}}>
                 <LinearGradient style = {{flex:1}} colors = {['#F58163','#945A4A','#372416']}>
                     <View style = {{flex:1,paddingTop:20,alignItems:'center',justifyContent:'space-between'}}>
@@ -75,6 +76,7 @@ class AddStudentScreen extends Component {
                                 borderRadius:20,alignItems:'center'}}>
                                 <MaterialCommunityIcons name="matrix" size={30} color="rgba(255,255,255,0.6)" />
                                 <TextInput
+                                    keyboardType = {'numeric'}
                                     onChangeText = {(text)=>{this.setState({mssv:text})}}
                                     placeholderTextColor={'rgba(255,255,255,0.5)'}
                                     placeholder = {'MSSV'}
@@ -84,7 +86,8 @@ class AddStudentScreen extends Component {
                                 borderRadius:20,alignItems:'center'}}>
                                 <MaterialCommunityIcons name="matrix" size={30} color="rgba(255,255,255,0.6)" />
                                 <TextInput
-                                onChangeText = {(text)=>{this.setState({id:text})}}
+                                    keyboardType = {'numeric'}
+                                    onChangeText = {(text)=>{this.setState({id:text})}}
                                     placeholderTextColor={'rgba(255,255,255,0.5)'}
                                     placeholder = {'ID'}
                                 style = {{flex:1,paddingLeft:20,width:width-40-30,paddingRight:10}}/>
@@ -92,21 +95,32 @@ class AddStudentScreen extends Component {
                         </View>
                         <TouchableOpacity onPress = {()=>{
                             if (id != '' && name != '' && mssv != '') {
-                                const json = {
-                                    id,hoten:name,mssv
-                                }
-                                axios.post('https://doantotnghiep.herokuapp.com/saveSV/',qs.stringify(json))
-                                  .then(response => {
-                                        if (response.data.status == 'OK') {
-                                            alert("ADD SUCCESS")
-                                        } else {
-                                            alert("ADD FAILED")
-                                        }
-                                  })
-                                  .catch(error => {
-                                    console.log(error);
-                                        alert("ADD FAILED")
-                                  });
+                                Alert.alert(
+                                    'Are you sure?',
+                                    `Add Student ${name} for Id ${id}`,
+                                    [
+                                        {text: 'Cancel', onPress: () => {}},
+                                        {text: 'OK', onPress: () => {
+                                            const json = {
+                                                id,hoten:name,mssv
+                                            }
+                                            axios.post('https://doantotnghiep.herokuapp.com/saveSV/',qs.stringify(json))
+                                              .then(response => {
+                                                    if (response.data.status == 'OK') {
+                                                        alert("ADD SUCCESS")
+                                                    } else {
+                                                        alert("ADD FAILED")
+                                                    }
+                                              })
+                                              .catch(error => {
+                                                console.log(error);
+                                                    alert("ADD FAILED")
+                                            });
+                                        }},
+                                    ],
+                                    { cancelable: true }
+                                )
+                                
                             } else {
                                 alert("PLEASE PRESS FULL INFORMATION")
                             }
@@ -121,6 +135,7 @@ class AddStudentScreen extends Component {
                     </View>
                 </LinearGradient>
                 </View>
+                </TouchableWithoutFeedback>
             </View>
         )
     }
