@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput,
     Animated,Easing,FlatList
-    , KeyboardAvoidingView , TouchableOpacity } from 'react-native';
+    , KeyboardAvoidingView , TouchableOpacity,Alert } from 'react-native';
 import {
   StackNavigator,
 } from 'react-navigation';
@@ -13,7 +13,9 @@ import {fetchDataAllSubject,fetchDataAllStudent} from '../../actions/fetchData'
 import Header from '../../component/header'
 import Indicator from '../../component/indicator'
 import { allSubject } from '../../reducer/fetchDataReducer/index';
-
+import Swipeout from 'react-native-swipeout';
+var qs = require('qs');
+import axios from 'axios'
 class ListSubjectScreen extends Component {
     constructor(props) {
         super(props)
@@ -55,16 +57,56 @@ class ListSubjectScreen extends Component {
                         ItemSeparatorComponent = {this.FlatListItemSeparator}
                         data={data}
                         renderItem={({item,index}) =>
-                            <View style = {{width,flexDirection:'row',backgroundColor:'rgba(255,255,255,0.2)'}}>
-                                <View style = {{width:width/3,height:60,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
-                                    <Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>{item.tenMonHoc}</Text>
+                            {
+                            let swipeBtns = [{
+                                text: 'Delete',
+                                backgroundColor: 'red',
+                                fontWeight:'bold',
+                                underlayColor: '#fff',
+                                onPress: () => {
+                                    Alert.alert(
+                                        'Are you sure?',
+                                        `Delete subject ${item.tenMonHoc}`,
+                                        [
+                                            {text: 'Cancel', onPress: () => {}},
+                                            {text: 'OK', onPress: () => {
+                                                axios.post('https://doantotnghiep.herokuapp.com/deleteSubject/',qs.stringify({
+                                                    tenmonhoc:item.tenMonHoc
+                                                }))
+                                                .then(response => {
+                                                    if (response.data.status == 'OK') {
+                                                        this.props.fetchDataAllSubject()                                            
+                                                    } else {
+                                                        alert("DELETE FAILED")
+                                                    }
+                                                }).then(()=>{
+                                                    alert("DELETE SUCCESS")                                        
+                                                })
+                                                .catch(error => {
+                                                console.log(error);
+                                                    alert("DELETE FAILED")
+                                                });
+                                            }},
+                                        ],
+                                        { cancelable: true }
+                                    )
+                                }
+                            }];
+                                return<Swipeout right={swipeBtns}
+                                autoClose={true}
+                                backgroundColor= 'transparent'>
+                                <View style = {{width,flexDirection:'row',backgroundColor:'rgba(255,255,255,0.2)'}}>
+                                    <View style = {{width:width/3,height:60,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
+                                        <Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>{item.tenMonHoc}</Text>
+                                    </View>
+                                    <View style = {{paddingLeft:10,justifyContent:'center'}}>
+                                        <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Day of week: {item.thu}</Text>
+                                        <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Date: {item.dateStart} - {item.dateEnd}</Text>
+                                        <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Time: {item.timeStart} - {item.timeEnd}</Text>
+                                    </View>
                                 </View>
-                                <View style = {{paddingLeft:10,justifyContent:'center'}}>
-                                    <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Day of week: {item.thu}</Text>
-                                    <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Date: {item.dateStart} - {item.dateEnd}</Text>
-                                    <Text style = {{backgroundColor:'transparent',fontSize:12,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Time: {item.timeStart} - {item.timeEnd}</Text>
-                                </View>
-                            </View>
+                                </Swipeout>
+                            }
                         }
                     />
                 </LinearGradient>

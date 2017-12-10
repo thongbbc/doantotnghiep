@@ -34,4 +34,37 @@ getStudent = () => {
     })
 }
 
-export {getMonHoc,getStudent,getDangKyMon};
+sendRemoveRegisterSubject = (monHoc) => {
+    return new Promise((resolve, reject) => {
+        fetch('https://doantotnghiep.herokuapp.com/removeDangKyMonHoc/?monHoc='+monHoc, {method: 'GET'}).then((response) => response.json()).then((responseJson) => {
+            if(responseJson.status == 'OK') {
+                console.log(JSON.stringify(responseJson))
+                resolve()
+            } else {
+                console.error(error);
+                return reject('ERROR')    
+            }
+        }).catch((error) => {
+            console.error(error);
+            return reject('ERROR')
+        });
+    })
+}
+sendRegisterSubject = (data) => {
+    return new Promise((resolve, reject) => {
+        fetch('https://doantotnghiep.herokuapp.com/saveJsonDangKyMon/?json='+JSON.stringify(data), {method: 'GET'}).then((response) => response.json()).then((responseJson) => {
+            if(responseJson.status == 'OK') {
+                console.log(JSON.stringify(responseJson))
+                resolve("Register Success")
+            } else {
+                console.error(error);
+                return reject('ERROR')                
+            }
+        }).catch((error) => {
+            console.error(error);
+            return reject('ERROR')
+        });
+    })
+}
+
+export {getMonHoc,getStudent,getDangKyMon,sendRegisterSubject,sendRemoveRegisterSubject};

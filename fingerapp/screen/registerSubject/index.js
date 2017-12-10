@@ -9,12 +9,12 @@ import { EvilIcons,Ionicons,Entypo,Foundation,MaterialIcons, FontAwesome ,Materi
 import {LinearGradient} from 'expo'
 import {width,height} from '../../helperScreen'
 import {connect} from 'react-redux';
-import {fetchDataAllSubject,fetchDataAllStudent,fetchDataRegisterSubject,changeCheck} from '../../actions/fetchData'
+import {fetchDataAllSubject,fetchDataAllStudent,fetchDataRegisterSubject,changeCheck,} from '../../actions/fetchData'
 import Header from '../../component/header'
 import Indicator from '../../component/indicator'
 import DatePicker from 'react-native-datepicker'
 import Modal from 'react-native-simple-modal';
-
+import {sendRegisterSubject,sendRemoveRegisterSubject} from '../../api/registerSubject'
 import { allSubject } from '../../reducer/fetchDataReducer/index';
 
 class RegisterSubjectScreen extends Component {
@@ -32,7 +32,7 @@ class RegisterSubjectScreen extends Component {
     }    
     componentDidMount() {
         this.props.fetchDataAllSubject()
-        this.props.fetchDataAllStudent()        
+        // this.props.fetchDataAllStudent()        
     }
 
     FlatListItemSeparator = () => {
@@ -55,12 +55,35 @@ class RegisterSubjectScreen extends Component {
             <View style = {{flex:1}}>
                 <Header>
                     <TouchableOpacity onPress = {()=>{
+                        this.setState({selectedSubject:'Click for select a subject'})
                         this.props.navigation.goBack(null)
                     }}>
                         <Ionicons name="ios-arrow-round-back" size={30} color="white" />
                     </TouchableOpacity>
                     <View style = {{flex:1,justifyContent:'center',alignItems:'center',paddingBottom:10}}
                     ><Text style = {{color:'white',fontSize:18}}>Register</Text></View>
+                    
+                    <TouchableOpacity onPress = {(getRegisterSubjectData.data.length!=0&&selectedSubject!='Click for select a subject')?
+                    ()=>{
+                            var data = []
+                            getRegisterSubjectData.data.map((value)=> {
+                                if (value.check) {
+                                    data.push(value)
+                                }
+                            })
+                            sendRemoveRegisterSubject(selectedSubject).then(()=>{
+                                sendRegisterSubject(data).then((message)=>{
+                                    alert(message)
+                                }).catch((error)=> {
+                                    alert('ERROR')
+                                })
+                            }).catch((error) => {
+                                alert('ERROR')
+                            })
+                    }:null}>
+                        <Foundation name="save" size={30} color={(getRegisterSubjectData.data.length!=0&&selectedSubject!='Click for select a subject')?
+                        "white":'black'} />
+                    </TouchableOpacity>
                 </Header>
                 <View style = {{flex:1}}>
                 <LinearGradient style = {{flex:1}} colors = {['#F58163','#945A4A','#372416']}>
@@ -97,7 +120,7 @@ class RegisterSubjectScreen extends Component {
                                     }}
                                     style = {{right:10,width:40,height:40,justifyContent:'center',alignItems:'center'}}>
                                         <View >
-                                            {item.check?<Entypo name="check" size={30} color="black" />:<Entypo name="check" size={30} color="white" />}
+                                            {item.check?<Entypo name="check" size={30} color="white" />:<Entypo name="check" size={30} color="black" />}
                                             
                                         </View>
                                     </TouchableOpacity>
@@ -154,7 +177,7 @@ class RegisterSubjectScreen extends Component {
                             />
                         </View>
                     </Modal>
-                    {Indicator(getRegisterSubjectData.isFetching && getRegisterSubjectData.isFetching)}
+                    {Indicator(getRegisterSubjectData.isFetching || allSubject.isFetching)}
                 </LinearGradient>
                 </View>
             </View>

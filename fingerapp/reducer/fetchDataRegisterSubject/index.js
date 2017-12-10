@@ -12,7 +12,6 @@ import {
 
     function getRegisterSubjectData (state = initialState, action) {
       switch (action.type) {
-          
         case FETCHING_DATA_CHANGECHECK_REGISTER_SUBJECT : {
             var data = state.data
             data[action.index].check = ! data[action.index].check
@@ -32,24 +31,25 @@ import {
             var student = action.dataStudent;
             const dangKyMon = action.dataDangKyMon
             student.map((value)=>{
-                dangKyMon.map((valueDangKyMon)=>{
-                    if (valueDangKyMon.tenMonHoc == action.monHoc) {
-                        if (value.id == valueDangKyMon.id) {
-                            value.check = true
-                        } else {
-                            value.check = false
-                        }
+                value.check = false
+                if (dangKyMon.length !=0) {
+                    dangKyMon.map((valueDangKyMon)=>{
+                        if (valueDangKyMon.tenMonHoc == action.monHoc) {
+                            value.id == valueDangKyMon.id?value.check = true:null
+                        }  
+                    })
+                } else {
+                    value.check = false
+                }
+                dsMonHoc.map((valueMonHoc)=>{
+                    if (valueMonHoc.tenMonHoc == action.monHoc) {
+                        value.timeStart = valueMonHoc.timeStart;
+                        value.timeEnd = valueMonHoc.timeEnd;
+                        value.thu = valueMonHoc.thu;
+                        value.nghihoc = false;
+                        value.tenMonHoc = action.monHoc
                     }
-                    dsMonHoc.map((valueMonHoc)=>{
-                        if (valueMonHoc.tenMonHoc == action.monHoc) {
-                            value.timeStart = valueMonHoc.timeStart;
-                            value.timeEnd = valueMonHoc.timeEnd;
-                            value.thu = valueMonHoc.thu;
-                            value.nghihoc = false;
-                            value.tenMonHoc = action.monHoc
-                        }
-                    })                 
-                })
+                })               
             })
             return {
                 ...state,

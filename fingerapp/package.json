@@ -9,6 +9,7 @@
     "react-native-datepicker": "^1.6.0",
     "react-native-simple-modal": "^7.0.0",
     "react-native-swipe-gestures": "^1.0.2",
+    "react-native-swipeout": "^2.3.1",
     "react-navigation": "^1.0.0-beta.21",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",

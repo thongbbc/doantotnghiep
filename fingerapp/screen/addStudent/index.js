@@ -13,18 +13,18 @@ import {fetchDataAllSubject,fetchDataAllStudent} from '../../actions/fetchData'
 import Header from '../../component/header'
 import Indicator from '../../component/indicator'
 import DatePicker from 'react-native-datepicker'
-
+import axios from 'axios';
 import { allSubject } from '../../reducer/fetchDataReducer/index';
+var qs = require('qs');
 
 class AddStudentScreen extends Component {
     constructor(props) {
         super(props)
         const date = new Date()
         this.state = {
-            timeStart:'',
-            timeEnd:'',
-            dateStart:'',
-            dateEnd:'',
+            mssv:'',
+            id:'',
+            name:'',
         }
     }    
     componentDidMount() {
@@ -42,9 +42,11 @@ class AddStudentScreen extends Component {
         );
     }
     render() {
+     
         const currentTime = new Date()
         const {allSubject} = this.props
         const {data} = allSubject
+        const {mssv,name,id} = this.state
         return(
             <View style = {{flex:1}}>
                 <Header>
@@ -64,28 +66,51 @@ class AddStudentScreen extends Component {
                                 borderRadius:20,alignItems:'center'}}>
                                 <MaterialIcons name="person" size={30} color="rgba(255,255,255,0.6)" />
                                 <TextInput
+                                onChangeText = {(text)=>{this.setState({name:text})}}
                                     placeholderTextColor={'rgba(255,255,255,0.5)'}
                                     placeholder = {'Name student'}
-                                style = {{flex:1,paddingLeft:20}}/>
+                                style = {{flex:1,paddingLeft:20,width:width-40-30,paddingRight:10}}/>
                             </View>
                             <View style = {{paddingLeft:20,flexDirection:'row',width:width-40,height:40,marginBottom:10,backgroundColor:'rgba(255,255,255,0.1)',
                                 borderRadius:20,alignItems:'center'}}>
                                 <MaterialCommunityIcons name="matrix" size={30} color="rgba(255,255,255,0.6)" />
                                 <TextInput
+                                    onChangeText = {(text)=>{this.setState({mssv:text})}}
                                     placeholderTextColor={'rgba(255,255,255,0.5)'}
                                     placeholder = {'MSSV'}
-                                style = {{flex:1,paddingLeft:20}}/>
+                                style = {{flex:1,width:width-40-30,paddingLeft:20,paddingRight:10}}/>
                             </View>
                             <View style = {{paddingLeft:20,flexDirection:'row',width:width-40,height:40,marginBottom:10,backgroundColor:'rgba(255,255,255,0.1)',
                                 borderRadius:20,alignItems:'center'}}>
                                 <MaterialCommunityIcons name="matrix" size={30} color="rgba(255,255,255,0.6)" />
                                 <TextInput
+                                onChangeText = {(text)=>{this.setState({id:text})}}
                                     placeholderTextColor={'rgba(255,255,255,0.5)'}
                                     placeholder = {'ID'}
-                                style = {{flex:1,paddingLeft:20}}/>
+                                style = {{flex:1,paddingLeft:20,width:width-40-30,paddingRight:10}}/>
                             </View>
                         </View>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress = {()=>{
+                            if (id != '' && name != '' && mssv != '') {
+                                const json = {
+                                    id,hoten:name,mssv
+                                }
+                                axios.post('https://doantotnghiep.herokuapp.com/saveSV/',qs.stringify(json))
+                                  .then(response => {
+                                        if (response.data.status == 'OK') {
+                                            alert("ADD SUCCESS")
+                                        } else {
+                                            alert("ADD FAILED")
+                                        }
+                                  })
+                                  .catch(error => {
+                                    console.log(error);
+                                        alert("ADD FAILED")
+                                  });
+                            } else {
+                                alert("PLEASE PRESS FULL INFORMATION")
+                            }
+                        }}>
                         <View style = {{width:width-40,height:40,marginBottom:20,backgroundColor:'transparent',
                             borderRadius:20,borderWidth:1,borderColor:'white',alignItems:'center',justifyContent:'center'}}>
                             <Entypo name="check" size={30} color="#7ECD4D" />
