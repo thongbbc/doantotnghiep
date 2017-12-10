@@ -15,7 +15,7 @@ import Indicator from '../../component/indicator'
 import Swipeout from 'react-native-swipeout';
 var qs = require('qs');
 import axios from 'axios'
-class AllStudentScreen extends Component {
+class DetailScreen extends Component {
     constructor(props) {
         super(props)
     }    
@@ -98,9 +98,7 @@ class AllStudentScreen extends Component {
                                 fontWeight:'bold',
                                 color:'black',
                                 underlayColor: '#fff',
-                                onPress: () => {
-                                    this.props.navigation.navigate('DetailScreen',item.id)
-                                }
+                                onPress: () => {}
                             }];
                             return <Swipeout right={swipeBtns}
                             autoClose={true}
@@ -138,4 +136,4 @@ function mapDispatchToProps (dispatch) {
       fetchDataAllStudent: () => dispatch(fetchDataAllStudent())
     }
   }
-export default connect (mapStateToProps,mapDispatchToProps)(AllStudentScreen);
+export default connect (mapStateToProps,mapDispatchToProps)(DetailScreen);

@@ -15,6 +15,8 @@ import ListSubjectScreen from './screen/listsubject'
 import AddSubjectScreen from './screen/addSubject'
 import AddStudentScreen from './screen/addStudent'
 import RegisterSubjectScreen from './screen/registerSubject'
+import DetailScreen from './screen/detailScreen'
+
 
 import {Provider} from 'react-redux';
 import {createStore,applyMiddleware} from 'redux';
@@ -62,6 +64,11 @@ const Navigator = StackNavigator({
     }),
   },
   RegisterSubjectScreen: {screen: RegisterSubjectScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+    }),
+  },
+  DetailScreen: {screen: DetailScreen,
     navigationOptions: ({navigation}) => ({
       header: null,
     }),
