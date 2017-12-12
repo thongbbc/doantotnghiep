@@ -156,28 +156,28 @@ class DetailScreen extends Component {
                                                 })
                                                 self.setState({history:data})
                                                 self.setState({isFetching:false})        
-
-                                                fetch('http://doantotnghiep.herokuapp.com/check?start='+item.timeStart+'&&end='+item.timeEnd+'&&thu='+item.thu).then((response) => response.json()).then((responseJson) => {
-                                                    if(responseJson) {
-                                                        var data = []
-                                                        responseJson.map((value)=> {
-                                                            if (value.id == self.props.navigation.state.params.id && value.tenmonhoc == item.tenMonHoc) {
-                                                                data.push(value)
-                                                            }
-                                                        })
-                                                        self.setState({history:data})
-                                                        self.setState({isFetching:false})                                                
-                                                        console.log(JSON.stringify(responseJson))
-                                                    } else {
-                                                        console.error(error);
-                                                        alert("ERROR")
-                                                        self.setState({isFetching:false})                                                                                                
-                                                    }
-                                                }).catch((error) => {
-                                                    console.error(error);
-                                                    alert("ERROR")                                            
-                                                    self.setState({isFetching:false})                                                                                            
-                                                });
+                                                // self.setState({isFetching:true})                                                
+                                                // alert('http://doantotnghiep.herokuapp.com/check?start='+item.timeStart+'&end='+item.timeEnd+'&thu='+item.thu)
+                                                // fetch('http://doantotnghiep.herokuapp.com/check?start='+item.timeStart+'&end='+item.timeEnd+'&thu='+item.thu).then((response) => response.json()).then((responseJson) => {
+                                                //     if(responseJson) {
+                                                //         var data = []
+                                                //         responseJson.day.map((value)=> {
+                                                //             if (value.id == self.props.navigation.state.params.id && value.tenmonhoc == item.tenMonHoc) {
+                                                //                 data.push(value)
+                                                //             }
+                                                //         })
+                                                //         self.setState({isFetching:false})                                                
+                                                //         console.log(JSON.stringify(responseJson))
+                                                //     } else {
+                                                //         console.error(error);
+                                                //         alert("ERROR")
+                                                //         self.setState({isFetching:false})                                                                                                
+                                                //     }
+                                                // }).catch((error) => {
+                                                //     console.error(error);
+                                                //     alert("ERROR")                                            
+                                                //     self.setState({isFetching:false})                                                                                            
+                                                // });
 
                                             } else {
                                                 console.error(error);
