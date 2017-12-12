@@ -95,7 +95,7 @@ class DetailScreen extends Component {
                         <View style = {{paddingTop:10,paddingBottom:10,flexDirection:'row',width:width-40-40,justifyContent:'space-between'}}><Text style = {{color:'white',fontWeight:'bold'}}>Total Time Join:</Text><Text style = {{color:'white',fontWeight:'bold'}}>{percent}%</Text></View>
                         <View style = {{paddingTop:10,paddingBottom:10,flexDirection:'row',width:width-40-40,justifyContent:'space-between'}}><Text style = {{color:'white',fontWeight:'bold'}}>History:</Text><View>
                                 {
-                                    this.state.history.map((value,index)=> <Text keyExtractor = {index} style = {{color:'white',fontWeight:'bold'}}>{value.date}</Text>)
+                                    this.state.history.map((value,index)=> <Text key = {index} style = {{color:'white',fontWeight:'bold'}}>{value.date}</Text>)
                                 }
                             </View></View>
 

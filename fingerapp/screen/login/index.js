@@ -6,10 +6,20 @@ import {
 import { EvilIcons,Ionicons,Entypo } from '@expo/vector-icons';
 import {LinearGradient} from 'expo'
 import {width,height} from '../../helperScreen'
-
-
+var qs = require('qs');
+import Indicator from '../../component/indicator'
+import axios from 'axios'
 export default class LoginScreen extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      username:'',
+      password:'',
+      isFetching:false
+    }
+  }
     render() {
+      const {isFetching} = this.state
       return(
         <View style = {{flex:1}}>
           <LinearGradient style = {{flex:1}} colors = {['#F58163','#945A4A','#372416']}>
@@ -26,6 +36,7 @@ export default class LoginScreen extends React.Component {
                 backgroundColor:'rgba(255,255,255,0.1)',alignItems:'center'}}>
                   <EvilIcons name="user" size={30} color="rgba(255,255,255,0.5)" />
                   <TextInput 
+                  onChangeText = {(text)=>this.setState({username:text})}                                    
                   underlineColorAndroid='transparent'
                   placeholder={'Username'} placeholderTextColor = {'white'} 
                   style = {{color:'white',paddingLeft:10,fontWeight:'500',flex:1,paddingRight:20}}/>
@@ -36,12 +47,38 @@ export default class LoginScreen extends React.Component {
                 backgroundColor:'rgba(255,255,255,0.1)',alignItems:'center'}}>
                   <EvilIcons name="unlock" size={30} color="rgba(255,255,255,0.5)" />
                   <TextInput 
+                  onChangeText = {(text)=>this.setState({password:text})}
                   underlineColorAndroid='transparent'
                   placeholder={'Password'} placeholderTextColor = {'white'} 
                   style = {{color:'white',paddingLeft:10,fontWeight:'500',flex:1,paddingRight:20}}/>
                 </View>
                 <TouchableOpacity onPress = {()=>{
-                    this.props.navigation.navigate('Main');
+                    const {username,password} = this.state
+                    if (username!='' && password!='') {
+                      this.setState({isFetching:true})
+                      const json = {
+                        username,password
+                      }
+                      axios.post('https://doantotnghiep.herokuapp.com/dangNhap',qs.stringify(json))
+                      .then(response => {
+                          if (response.data.status == 'OK') {
+                            this.props.navigation.navigate('Main');   
+                            this.setState({isFetching:false})                            
+                              alert("Login Success")
+                          } else {
+                            this.setState({isFetching:false})                                                        
+                              alert("Your Username or Password incorrect")
+                          }
+                      })
+                      .catch(error => {
+                      console.log(error);
+                      this.setState({isFetching:false})                                                  
+                          alert("Please check your network again")
+                      });
+                    } else {
+                      this.setState({isFetching:false})                                                  
+                      alert('Please press full information')
+                    }
                   }}>
                     <View style = {{width:width-40,height:50,borderRadius:25,backgroundColor:'#F44C27',justifyContent:'center',alignItems:'center'}}>
                         <Text style = {{color:'white',fontWeight:'600'}}>Get Started</Text>
@@ -49,7 +86,7 @@ export default class LoginScreen extends React.Component {
                 </TouchableOpacity>
                 <View style = {{width,paddingTop:20,paddingBottom:20,paddingLeft:20,paddingRight:20,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <TouchableOpacity onPress = {()=>{
-                    this.props.navigation.navigate('Signup');
+                    this.props.navigation.navigate('Signup');                                                                                    
                   }}>
                     <Text style = {{color:'rgba(255,255,255,0.5)',fontSize:12}}>Create Account</Text>
                   </TouchableOpacity>
@@ -62,6 +99,7 @@ export default class LoginScreen extends React.Component {
             </View>
             </KeyboardAvoidingView>
           </LinearGradient>
+          {Indicator(isFetching)}
         </View>
       )
     }
