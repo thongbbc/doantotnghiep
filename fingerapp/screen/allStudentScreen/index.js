@@ -99,7 +99,7 @@ class AllStudentScreen extends Component {
                                 color:'black',
                                 underlayColor: '#fff',
                                 onPress: () => {
-                                    this.props.navigation.navigate('DetailScreen',item.id)
+                                    this.props.navigation.navigate('DetailScreen',{id:item.id,hoten:item.hoten,mssv:item.mssv})
                                 }
                             }];
                             return <Swipeout right={swipeBtns}
