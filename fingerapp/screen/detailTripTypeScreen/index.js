@@ -18,9 +18,21 @@ import axios from 'axios'
 class DetailTripTypeScreen extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            visibleLoading:false,
+            data:[]
+        }
     }    
     componentDidMount() {
-        this.props.fetchDataAllStudent()
+        this.setState({visibleLoading:true})
+        fetch(`https://doantotnghiep.herokuapp.com/getTripWithId?id=${this.props.navigation.state.params.id}`, {method: 'GET'}).then((response) => response.json()).then((responseJson) => {
+            console.log(JSON.stringify(responseJson))
+            this.setState({data:responseJson,visibleLoading:false})
+        }).catch((error) => {
+            console.error(error);
+            this.setState({visibleLoading:false})
+            alert("ERROR")
+        });
     }
 
     FlatListItemSeparator = () => {
@@ -35,9 +47,9 @@ class DetailTripTypeScreen extends Component {
         );
     }
     render() {
-        
+        const {id,hoten,mssv} = this.props.navigation.state.params
         const {allStudent} = this.props
-        const {data} = allStudent
+        const {data,visibleLoading} = this.state
         return(
             <View style = {{flex:1}}>
                 <Header>
@@ -50,9 +62,12 @@ class DetailTripTypeScreen extends Component {
                     ><Text style = {{color:'white',fontSize:18}}>Information all students</Text></View>
                 </Header>
                 <View style = {{flex:1}}>
-                <LinearGradient style = {{flex:1}} colors = {['#F58163','#945A4A','#372416']}>
+                <LinearGradient style = {{flex:1,alignItems:'center'}} colors = {['#F58163','#945A4A','#372416']}>
+                    <View style = {{flexDirection:'row'}}><Text style = {{backgroundColor:'transparent',color:'white',padding:10,fontSize:15,fontWeight:'bold'}}>Hoten:{hoten}</Text>
+                    <Text style = {{backgroundColor:'transparent',color:'white',padding:10,fontSize:15,fontWeight:'bold'}}>MSSV:{mssv}</Text>
+                    </View>
                     <FlatList
-                        keyExtractor={item => item.id}
+                        keyExtractor={(item,index) => index}
                         style = {{flex:1}}
                         ItemSeparatorComponent = {this.FlatListItemSeparator}
                         data={data}
@@ -107,11 +122,19 @@ class DetailTripTypeScreen extends Component {
                             backgroundColor= 'transparent'>
                                 <View style = {{width,flexDirection:'row',backgroundColor:'rgba(255,255,255,0.2)'}}>
                                     <View style = {{width:60,height:60,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
-                                        <Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>{item.id}</Text>
+                                        {
+                                            index==0?<Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>Newest</Text>:<Text style = {{color:'white',fontSize:13,fontWeight:'bold'}}>-</Text>
+                                        }
+                                        
                                     </View>
-                                    <View style = {{paddingLeft:10,justifyContent:'center'}}>
-                                        <Text style = {{backgroundColor:'transparent',marginBottom:5,fontSize:13,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>{item.hoten}</Text>
-                                        <Text style = {{backgroundColor:'transparent',fontSize:10,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>MSSV:{item.mssv}</Text>
+                                    <View style = {{flex:1,paddingLeft:10,paddingRight:10,justifyContent:'center'}}>
+                                        <View style = {{flex:1,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                                        <View>
+                                            <Text style = {{backgroundColor:'transparent',fontSize:13,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Time:{item.time}</Text>
+                                            <Text style = {{backgroundColor:'transparent',fontSize:13,marginBottom:5,fontWeight:'400',color:'rgba(0,0,0,0.8)'}}>Date:{item.date}</Text>
+                                        </View>
+                                            {item.typeTrip?<Entypo name="align-right" size={30} color="white" />:<Entypo name="align-left" size={30} color="rgba(255,255,255,0.2)" />}
+                                        </View>
                                     </View>
                                 </View>
                             </Swipeout>
@@ -119,7 +142,7 @@ class DetailTripTypeScreen extends Component {
                         }
                     />
                 </LinearGradient>
-                {Indicator(allStudent.isFetching)}
+                {Indicator(visibleLoading)}
                 </View>
             </View>
         )

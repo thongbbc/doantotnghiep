@@ -58,40 +58,7 @@ class TripTypeScreen extends Component {
                         data={data}
                         renderItem={({item,index}) =>
                         {
-                            let swipeBtns = [{
-                                text: 'Delete',
-                                backgroundColor: 'red',
-                                fontWeight:'bold',
-                                underlayColor: '#fff',
-                                onPress: () => {
-                                    Alert.alert(
-                                        'Are you sure?',
-                                        `Delete student ${item.hoten}`,
-                                        [
-                                            {text: 'Cancel', onPress: () => {}},
-                                            {text: 'OK', onPress: () => {
-                                                axios.post('https://doantotnghiep.herokuapp.com/deleteSV/',qs.stringify({
-                                                    id:item.id
-                                                }))
-                                                .then(response => {
-                                                      if (response.data.status == 'OK') {
-                                                        this.props.fetchDataAllStudent()                                            
-                                                      } else {
-                                                          alert("DELETE FAILED")
-                                                      }
-                                                }).then(()=>{
-                                                    alert("DELETE SUCCESS")                                        
-                                                })
-                                                .catch(error => {
-                                                  console.log(error);
-                                                      alert("DELETE FAILED")
-                                                });
-                                            }},
-                                        ],
-                                        { cancelable: true }
-                                      )
-                                }
-                            },
+                            let swipeBtns = [
                             {
                                 text: 'Detail',
                                 backgroundColor: 'rgba(255,255,255,1)',
@@ -99,7 +66,7 @@ class TripTypeScreen extends Component {
                                 color:'black',
                                 underlayColor: '#fff',
                                 onPress: () => {
-                                    this.props.navigation.navigate('DetailScreen',{id:item.id,hoten:item.hoten,mssv:item.mssv})
+                                    this.props.navigation.navigate('DetailTripTypeScreen',{id:item.id,hoten:item.hoten,mssv:item.mssv})
                                 }
                             }];
                             return <Swipeout right={swipeBtns}
