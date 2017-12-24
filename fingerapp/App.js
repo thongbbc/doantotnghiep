@@ -16,7 +16,8 @@ import AddSubjectScreen from './screen/addSubject'
 import AddStudentScreen from './screen/addStudent'
 import RegisterSubjectScreen from './screen/registerSubject'
 import DetailScreen from './screen/detailScreen'
-
+import TripTypeScreen from './screen/tripTypeScreen'
+import DetailTripTypeScreen from './screen/detailTripTypeScreen'
 
 import {Provider} from 'react-redux';
 import {createStore,applyMiddleware} from 'redux';
@@ -69,6 +70,16 @@ const Navigator = StackNavigator({
     }),
   },
   DetailScreen: {screen: DetailScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+    }),
+  },
+  TripTypeScreen: {screen: TripTypeScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+    }),
+  },
+  DetailTripTypeScreen: {screen: DetailTripTypeScreen,
     navigationOptions: ({navigation}) => ({
       header: null,
     }),

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput , KeyboardAvoidingView , TouchableOpacity } from 'react-native';
+import { StyleSheet,Keyboard, Text, View, TextInput , KeyboardAvoidingView , TouchableOpacity } from 'react-native';
 import {
   StackNavigator,
 } from 'react-navigation';
@@ -47,6 +47,7 @@ export default class LoginScreen extends React.Component {
                 backgroundColor:'rgba(255,255,255,0.1)',alignItems:'center'}}>
                   <EvilIcons name="unlock" size={30} color="rgba(255,255,255,0.5)" />
                   <TextInput 
+                  secureTextEntry = {true}                                        
                   onChangeText = {(text)=>this.setState({password:text})}
                   underlineColorAndroid='transparent'
                   placeholder={'Password'} placeholderTextColor = {'white'} 
@@ -54,6 +55,7 @@ export default class LoginScreen extends React.Component {
                 </View>
                 <TouchableOpacity onPress = {()=>{
                     const {username,password} = this.state
+                    Keyboard.dismiss()
                     if (username!='' && password!='') {
                       this.setState({isFetching:true})
                       const json = {
@@ -86,6 +88,7 @@ export default class LoginScreen extends React.Component {
                 </TouchableOpacity>
                 <View style = {{width,paddingTop:20,paddingBottom:20,paddingLeft:20,paddingRight:20,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <TouchableOpacity onPress = {()=>{
+                    Keyboard.dismiss()
                     this.props.navigation.navigate('Signup');                                                                                    
                   }}>
                     <Text style = {{color:'rgba(255,255,255,0.5)',fontSize:12}}>Create Account</Text>

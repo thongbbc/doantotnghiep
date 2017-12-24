@@ -168,7 +168,7 @@ class MainScreen extends Component {
                                     )
                                     }
                                     case 1:{return(
-                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('AllStudentScreen');}}>                                        
+                                        <TouchableOpacity onPress = {()=>{this.props.navigation.navigate('TripTypeScreen');}}>                                        
                                             <View key = {index} style = {{padding:20,justifyContent:'space-between',alignItems:'center',
                                             backgroundColor:color,width,height:50,flexDirection:'row'}}>
                                                 <Text>{item.title}</Text>
