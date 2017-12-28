@@ -11,6 +11,8 @@
 #include <Keypad.h>
 #include <Key.h>
 #include <SD.h>
+#define RELAY1 6
+#define RELAY2 7
 #define SD_ChipSelectPin 53  //sử dụng SS Pin 53 trên Mega2560
 //#define SD_ChipSelectPin 4  //thường sử dụng digital pin 4 trên arduino nano 328, hoặc chân tùy ý
 #include <SPI.h>
@@ -136,6 +138,10 @@ int statusPre = LOW;
 
 
 void setup(){
+    pinMode(RELAY1, OUTPUT);
+      pinMode(RELAY2, OUTPUT);
+
+
     Serial3.begin(115200);
 //    Serial.begin(115200);
   Serial.print("Initializing SD card...");
@@ -146,8 +152,8 @@ void setup(){
   Serial.println("initialization done.");
 
 
-  EEPROM.write(0, 11);
-  EEPROM.write(1,11);
+//  EEPROM.write(0, 11);
+//  EEPROM.write(1,11);
   
   
   
@@ -188,7 +194,11 @@ void setup(){
 //  while(FP_SUCCESS != fp2.save(160));
 //  fp2.upload(160, fbuffer);
 //  fp1.download(160, fbuffer);
-  
+
+
+
+  digitalWrite(RELAY1,HIGH);
+  digitalWrite(RELAY2,HIGH);
 }
 void loop()
 {
@@ -265,7 +275,7 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
       
         // if the file opened okay, write to it:
         if (myFile) {
-          Serial.print("Writing to test.csv...");
+          Serial.print("Wrsiting to test.csv...");
           readDS1307();
           String data = String(id)+"-ra-"+String(hour)+":"+String(minute)+":"+String(second)+"-"+String(day)+"/"+String(month)+"/"+String(year);
           myFile.println(data);
@@ -288,6 +298,9 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
         delay(3000);
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
+        digitalWrite(RELAY1,LOW);
+          delay(5000);
+          digitalWrite(RELAY1,HIGH);
       }
     }
 
@@ -357,6 +370,9 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
         delay(3000);
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
+        digitalWrite(RELAY1,LOW);
+          delay(5000);
+          digitalWrite(RELAY1,HIGH);
       }
     }
 
@@ -470,22 +486,10 @@ void menu(int value,int value2) {
         a = false;
       }
       if((stateENTER != lastENTER) && (stateENTER == 0)){
-         fp2.scan(&id);
-        fp1.scan(&id);
-        delay(1000);
-        if (id == 500) {
-          lcd.clear();
-          lcd.print("WRONG ID");
-          delay(3000);
-          lcd.clear();
-          lcd.print("WELCOME TO VLTH");
+        if (digitalRead(RELAY1) == HIGH) {
+          digitalWrite(RELAY1,LOW);
         } else {
-           id = 500;
-          lcd.clear();
-          lcd.print("SCAN SUCCESS");
-          delay(3000);
-          lcd.clear();
-          lcd.print("WELCOME TO VLTH");
+          digitalWrite(RELAY1,HIGH);
         }
       }
 
@@ -864,6 +868,7 @@ void nhapMatKhau(int value,int value2) {
       int pass2 = EEPROM.read(1);
       int fullPass = pass1*100 + pass2;
       if (fullKey.toInt() != fullPass){
+        lcd.clear();
         lcd.print("Nhap sai password");
         delay(1000);
       } else {
