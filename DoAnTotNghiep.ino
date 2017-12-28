@@ -257,7 +257,7 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
       if (id == 500) {
         lcd.clear();
         lcd.print("WRONG ID");
-        delay(1000);
+        delay(3000);
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
       } else {
@@ -285,7 +285,7 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
         id = 500;
         lcd.clear();
         lcd.print("SCAN SUCCESS");
-        delay(1000);
+        delay(3000);
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
       }
@@ -326,7 +326,7 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
       if (id == 500) {
         lcd.clear();
         lcd.print("WRONG ID");
-        delay(1000);
+        delay(3000);
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
       } else {
@@ -354,7 +354,7 @@ if (distance4 <=10 && ((distance4 - distance3) >=1 || ((distance3 - distance4) >
         id = 500;
         lcd.clear();
         lcd.print("SCAN SUCCESS");
-        delay(1000);
+        delay(3000);
         lcd.clear();
         lcd.print("WELCOME TO VLTH");
       }
@@ -470,7 +470,25 @@ void menu(int value,int value2) {
         a = false;
       }
       if((stateENTER != lastENTER) && (stateENTER == 0)){
+         fp2.scan(&id);
+        fp1.scan(&id);
+        delay(1000);
+        if (id == 500) {
+          lcd.clear();
+          lcd.print("WRONG ID");
+          delay(3000);
+          lcd.clear();
+          lcd.print("WELCOME TO VLTH");
+        } else {
+           id = 500;
+          lcd.clear();
+          lcd.print("SCAN SUCCESS");
+          delay(3000);
+          lcd.clear();
+          lcd.print("WELCOME TO VLTH");
+        }
       }
+
     } else
     if((voltage == 1)){
       a = true;
@@ -509,8 +527,9 @@ void menu(int value,int value2) {
         lastENTER = stateENTER;
         fp1.erase();
         fp2.erase(); 
+        lcd.clear();
         lcd.print("Success");
-        delay(1000);
+        delay(3000);
       }
     } else
     if((voltage == 3)){
@@ -700,6 +719,9 @@ void menu(int value,int value2) {
      if((stateENTER != lastENTER) && (stateENTER == 0)){
       Serial.println("didClickSetTime");
       setTime(gio, phut, 0, 1, daySet, monthSet, yearSet); // 12:30:45 CN 08-02-2015
+      lcd.clear();
+      lcd.print("Success");
+      delay(3000);
       lastENTER = stateENTER;
       flagMenu4 = false;
       flagMenu3 = false;
@@ -763,6 +785,8 @@ void menu(int value,int value2) {
         flagMenu2 = false;
         flagMenu5 = false;
         lcd.clear();
+        lcd.print("Success");
+        delay(3000);
         if (a == false) {
           a = true;
         } else if (b == false) {
